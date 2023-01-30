@@ -1,0 +1,20 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+    id 'com.github.spotbugs' version '5.0.13'
+}
+
+subprojects {
+    repositories {
+        mavenCentral()
+    }
+
+    apply plugin: 'jacoco'
+    apply plugin: "com.github.spotbugs"
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
+}
