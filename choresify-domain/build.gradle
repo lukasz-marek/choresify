@@ -8,6 +8,7 @@ version = choresifyVersion
 dependencies {
     annotationProcessor "org.immutables:value:$immutablesVersion"
     compileOnly "org.immutables:value:$immutablesVersion"
+    implementation 'ch.qos.logback:logback-classic:1.4.5'
 
     testImplementation platform('org.junit:junit-bom:5.9.2')
     testImplementation 'org.junit.jupiter:junit-jupiter'
