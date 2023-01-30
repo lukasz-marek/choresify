@@ -29,3 +29,9 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+bootRun {
+    environment "JDBC_URL", "jdbc:postgresql://localhost:5432/"
+    environment "JDBC_USERNAME", "postgres"
+    environment "JDBC_PASSWORD", "postgres"
+}
