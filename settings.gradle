@@ -1,3 +1,4 @@
 rootProject.name = 'choresify'
 
 include 'choresify-application'
+include 'choresify-domain'

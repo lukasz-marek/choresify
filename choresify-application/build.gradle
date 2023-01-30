@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'org.choresify'
-version = '0.0.1-SNAPSHOT'
+version = choresifyVersion
 sourceCompatibility = '17'
 
 repositories {
@@ -14,20 +14,20 @@ repositories {
 }
 
 dependencies {
+    implementation project(':choresify-domain')
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.liquibase:liquibase-core'
     runtimeOnly 'org.postgresql:postgresql'
 
-    var immutablesVersion = "2.9.3"
     annotationProcessor "org.immutables:value:$immutablesVersion"
     compileOnly "org.immutables:value:$immutablesVersion"
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.junit.jupiter:junit-jupiter-params'
 
-    testImplementation 'org.assertj:assertj-core:3.24.2'
-    testImplementation 'org.mockito:mockito-core:4.11.0'
+    testImplementation "org.assertj:assertj-core:$assertjVersion"
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
 
     testImplementation 'org.testcontainers:junit-jupiter:1.17.6'
     testImplementation 'org.testcontainers:postgresql:1.17.6'
