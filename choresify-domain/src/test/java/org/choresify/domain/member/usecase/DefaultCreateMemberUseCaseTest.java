@@ -3,8 +3,8 @@ package org.choresify.domain.member.usecase;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-import org.assertj.core.api.Assertions;
-import org.choresify.domain.common.validation.DomainException.DomainValidationException;
+import io.vavr.control.Validation;
+import java.util.List;
 import org.choresify.domain.member.model.Member;
 import org.choresify.domain.member.model.NewMember;
 import org.choresify.domain.member.port.Members;
@@ -14,7 +14,9 @@ import org.mockito.Mockito;
 class DefaultCreateMemberUseCaseTest {
 
   private final Members members = Mockito.mock(Members.class);
-  private final DefaultCreateMemberUseCase tested = new DefaultCreateMemberUseCase(members);
+  private final NewMemberValidator newMemberValidator = Mockito.mock(NewMemberValidator.class);
+  private final DefaultCreateMemberUseCase tested =
+      new DefaultCreateMemberUseCase(members, newMemberValidator);
 
   @Test
   void createsNewMemberWhenValid() {
@@ -28,51 +30,46 @@ class DefaultCreateMemberUseCaseTest {
             .id(21)
             .version(37)
             .build();
-    when(members.insert(newMember)).thenReturn(expected);
+    when(newMemberValidator.validate(newMember)).thenReturn(Validation.valid(newMember));
+    when(members.insert(newMember)).thenReturn(Validation.valid(expected));
 
     // when
     var result = tested.execute(newMember);
 
     // then
-    assertThat(result).isEqualTo(expected);
+    assertThat(result.get()).isEqualTo(expected);
   }
 
   @Test
-  void rejectsMemberWhenItIsNull() {
-    // when
-    var result =
-        Assertions.catchThrowableOfType(
-            () -> tested.execute(null), DomainValidationException.class);
-
-    // then
-    assertThat(result).hasMessageContaining("new member");
-  }
-
-  @Test
-  void rejectsMemberWhenNickNameIsNull() {
+  void returnsInvalidWhenRepositoryRejects() {
     // given
-    var newMember = NewMember.builder().nickname(null).emailAddress("adam@smith.com").build();
+    var newMember =
+        NewMember.builder().nickname("Adam Smith").emailAddress("adam@smith.com").build();
+    when(newMemberValidator.validate(newMember)).thenReturn(Validation.valid(newMember));
+    when(members.insert(newMember)).thenReturn(Validation.invalid(List.of("Something went wrong")));
 
     // when
-    var result =
-        Assertions.catchThrowableOfType(
-            () -> tested.execute(newMember), DomainValidationException.class);
+    var result = tested.execute(newMember);
 
     // then
-    assertThat(result).hasMessageContaining("nickname");
+    assertThat(result.getError()).hasSize(1);
+    assertThat(result.getError()).containsExactly("Something went wrong");
   }
 
   @Test
-  void rejectsMemberWhenEmailIsNull() {
+  void rejectsMemberWhenValidatorRejectsIt() {
+    // when
     // given
-    var newMember = NewMember.builder().nickname("a nickname").emailAddress(null).build();
+    var newMember =
+        NewMember.builder().nickname("Adam Smith").emailAddress("adam@smith.com").build();
+    when(newMemberValidator.validate(newMember))
+        .thenReturn(Validation.invalid(List.of("Something went wrong")));
 
     // when
-    var result =
-        Assertions.catchThrowableOfType(
-            () -> tested.execute(newMember), DomainValidationException.class);
+    var result = tested.execute(newMember);
 
     // then
-    assertThat(result).hasMessageContaining("email address");
+    assertThat(result.getError()).hasSize(1);
+    assertThat(result.getError()).containsExactly("Something went wrong");
   }
 }

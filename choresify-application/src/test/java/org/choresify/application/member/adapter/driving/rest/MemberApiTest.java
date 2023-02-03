@@ -13,7 +13,7 @@ import org.springframework.http.HttpStatus;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @PostgreSQLTest
 public class MemberApiTest {
-  private final String MEMBER_ENDPOINT = "/api/v1/members";
+  private static final String MEMBER_ENDPOINT = "/api/v1/members";
 
   @Autowired private TestRestTemplate testRestTemplate;
 

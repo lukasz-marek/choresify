@@ -19,7 +19,7 @@ final class MemberController {
   @PostMapping
   public ResponseEntity<MemberDto> postMember(@RequestBody NewMemberDto newMemberDto) {
     var newMember = memberDtoMapper.map(newMemberDto);
-    var member = createMemberUseCase.execute(newMember);
+    var member = createMemberUseCase.execute(newMember).get();
     var memberDto = memberDtoMapper.map(member);
     return ResponseEntity.status(HttpStatus.CREATED).body(memberDto);
   }
