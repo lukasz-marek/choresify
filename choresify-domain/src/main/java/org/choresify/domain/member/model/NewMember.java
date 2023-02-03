@@ -1,11 +1,12 @@
-package org.choresify.application.member.adapter.driving.rest;
+package org.choresify.domain.member.model;
 
 import lombok.Builder;
 import lombok.Value;
 
 @Builder
 @Value
-public class NewMemberDto {
+public class NewMember {
+
   String nickname;
   String emailAddress;
 }

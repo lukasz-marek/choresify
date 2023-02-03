@@ -21,7 +21,7 @@ public class MemberApiTest {
   void createsNewMemberWhenPayloadIsValid() {
     // given
     var newMember =
-        ImmutableNewMemberDto.builder()
+        NewMemberDto.builder()
             .nickname("Doctor Strange")
             .emailAddress("doctor@strange.com")
             .build();
