@@ -1,14 +1,18 @@
 package org.choresify.fixtures;
 
 import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
 import org.junit.jupiter.api.extension.ExtensionContext.Store.CloseableResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.containers.PostgreSQLContainer;
 
-class PostgresContainerExtension implements BeforeAllCallback, CloseableResource {
+class PostgresContainerExtension
+    implements BeforeAllCallback, CloseableResource, BeforeEachCallback {
   private static final Logger log = LoggerFactory.getLogger(PostgresContainerExtension.class);
   private static final String CONTEXT_KEY = "postgresql_container_initialized";
   private final PostgreSQLContainer<?> container =
@@ -49,5 +53,16 @@ class PostgresContainerExtension implements BeforeAllCallback, CloseableResource
       container.stop();
     }
     log.info("PostgreSQL container is now stopped");
+  }
+
+  @Override
+  public void beforeEach(ExtensionContext context) {
+    var applicationContext = SpringExtension.getApplicationContext(context);
+    var repositories = applicationContext.getBeansOfType(CrudRepository.class);
+    repositories.forEach(
+        (repositoryName, repository) -> {
+          log.info("Deleting all records from repository [{}]", repositoryName);
+          repository.deleteAll();
+        });
   }
 }
