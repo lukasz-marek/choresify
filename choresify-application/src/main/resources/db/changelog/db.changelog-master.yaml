@@ -1,1 +1,29 @@
-databaseChangeLog: [ ]
+databaseChangeLog:
+  - changeSet:
+      id: 040220231801
+      author: lmarek
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: nickname
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email_address
+                  type: text
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: version
+                  type: bigint
+                  constraints:
+                    nullable: false
+            tableName: member

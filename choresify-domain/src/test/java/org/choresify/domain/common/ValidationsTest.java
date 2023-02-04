@@ -18,7 +18,7 @@ class ValidationsTest {
         Validations.joining(validated, (object) -> Validation.valid("this value is ignored"));
 
     // then
-    assertThat(result.isValid());
+    assertThat(result.isValid()).isTrue();
     assertThat(result.get()).isSameAs(validated);
   }
 
@@ -31,7 +31,7 @@ class ValidationsTest {
     var result = Validations.joining(validated);
 
     // then
-    assertThat(result.isValid());
+    assertThat(result.isValid()).isTrue();
     assertThat(result.get()).isSameAs(validated);
   }
 
@@ -48,7 +48,7 @@ class ValidationsTest {
             (object) -> Validation.invalid("error 2"));
 
     // then
-    assertThat(result.isInvalid());
+    assertThat(result.isInvalid()).isTrue();
     assertThat(result.getError()).containsExactlyInAnyOrder("error 1", "error 2");
   }
 
@@ -66,7 +66,7 @@ class ValidationsTest {
             (object) -> Validation.valid("not an error as well"));
 
     // then
-    assertThat(result.isInvalid());
+    assertThat(result.isInvalid()).isTrue();
     assertThat(result.getError()).containsExactlyInAnyOrder("error 1");
   }
 }

@@ -14,4 +14,9 @@ class MemberConfiguration {
   CreateMemberUseCase createMemberUseCase(Members members, NewMemberValidator newMemberValidator) {
     return new DefaultCreateMemberUseCase(members, newMemberValidator);
   }
+
+  @Bean
+  NewMemberValidator newMemberValidator() {
+    return new NewMemberValidator();
+  }
 }

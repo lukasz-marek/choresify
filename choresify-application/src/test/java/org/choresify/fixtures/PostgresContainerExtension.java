@@ -1,23 +1,36 @@
 package org.choresify.fixtures;
 
-import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
+import org.junit.jupiter.api.extension.ExtensionContext.Store.CloseableResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.PostgreSQLContainer;
 
-class PostgresContainerExtension implements BeforeAllCallback, AfterAllCallback {
+class PostgresContainerExtension implements BeforeAllCallback, CloseableResource {
   private static final Logger log = LoggerFactory.getLogger(PostgresContainerExtension.class);
+  private static final String CONTEXT_KEY = "postgresql_container_initialized";
   private final PostgreSQLContainer<?> container =
       new PostgreSQLContainer<>(PostgreSQLContainer.IMAGE);
 
   @Override
-  public void beforeAll(ExtensionContext context) {
-    log.info("Starting PostgreSQL container");
-    container.start();
-    log.info("Successfully started PostgreSQL container");
-    setApplicationProperties();
+  public synchronized void beforeAll(ExtensionContext context) {
+    if (!containerAlreadyCreated(context)) {
+      log.info("Starting PostgreSQL container");
+      container.start();
+      log.info("Successfully started PostgreSQL container");
+      setApplicationProperties();
+      markContainerAsCreated(context);
+    }
+  }
+
+  private boolean containerAlreadyCreated(ExtensionContext context) {
+    return context.getRoot().getStore(Namespace.GLOBAL).get(CONTEXT_KEY) != null;
+  }
+
+  private void markContainerAsCreated(ExtensionContext context) {
+    context.getRoot().getStore(Namespace.GLOBAL).put(CONTEXT_KEY, this);
   }
 
   private void setApplicationProperties() {
@@ -30,7 +43,7 @@ class PostgresContainerExtension implements BeforeAllCallback, AfterAllCallback 
   }
 
   @Override
-  public void afterAll(ExtensionContext context) {
+  public void close() {
     log.info("Ensuring PostgreSQL container is stopped");
     if (container.isRunning()) {
       container.stop();

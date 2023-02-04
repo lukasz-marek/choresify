@@ -58,7 +58,6 @@ class DefaultCreateMemberUseCaseTest {
 
   @Test
   void rejectsMemberWhenValidatorRejectsIt() {
-    // when
     // given
     var newMember =
         NewMember.builder().nickname("Adam Smith").emailAddress("adam@smith.com").build();

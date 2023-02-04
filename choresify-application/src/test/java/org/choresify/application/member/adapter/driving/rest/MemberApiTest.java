@@ -2,16 +2,13 @@ package org.choresify.application.member.adapter.driving.rest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.choresify.fixtures.PostgreSQLTest;
+import org.choresify.fixtures.IntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@PostgreSQLTest
+@IntegrationTest
 public class MemberApiTest {
   private static final String MEMBER_ENDPOINT = "/api/v1/members";
 
@@ -36,6 +33,6 @@ public class MemberApiTest {
     assertThat(createdMember.getNickname()).isEqualTo("Doctor Strange");
     assertThat(createdMember.getEmailAddress()).isEqualTo("doctor@strange.com");
     assertThat(createdMember.getId()).isPositive();
-    assertThat(createdMember.getVersion()).isEqualTo(1L);
+    assertThat(createdMember.getVersion()).isEqualTo(0L);
   }
 }
