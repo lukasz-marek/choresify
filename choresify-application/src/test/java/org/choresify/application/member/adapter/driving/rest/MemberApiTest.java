@@ -9,7 +9,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 
 @IntegrationTest
-public class MemberApiTest {
+class MemberApiTest {
   private static final String MEMBER_ENDPOINT = "/api/v1/members";
 
   @Autowired private TestRestTemplate testRestTemplate;
