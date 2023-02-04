@@ -2,7 +2,6 @@ package org.choresify.domain.member.usecase;
 
 import io.vavr.control.Validation;
 import java.util.List;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.choresify.domain.common.validation.Validations;
 import org.choresify.domain.member.model.NewMember;
@@ -20,22 +19,29 @@ public class NewMemberValidator {
   }
 
   private Validation<List<String>, NewMember> validateNotNull(NewMember newMember) {
-    return Optional.ofNullable(newMember)
-        .map(Validation::<List<String>, NewMember>valid)
-        .orElseGet(() -> Validation.invalid(List.of("NewMember must not be null")));
+    if (newMember == null) {
+      log.warn("NewMember must not be null");
+      return Validation.invalid(List.of("NewMember must not be null"));
+    }
+    log.info("[{}] - not-null validation successful", newMember);
+    return Validation.valid(newMember);
   }
 
   private Validation<String, NewMember> validateNicknameNotNull(NewMember newMember) {
     if (newMember.getNickname() == null) {
+      log.warn("[{}] - nickname must not be null", newMember);
       return Validation.invalid("nickname must not be null");
     }
+    log.info("[{}] - nickname validation successful", newMember);
     return Validation.valid(newMember);
   }
 
   private Validation<String, NewMember> validateEmailAddressNotNull(NewMember newMember) {
     if (newMember.getEmailAddress() == null) {
+      log.warn("[{}] - email address must not be null", newMember);
       return Validation.invalid("email address must not be null");
     }
+    log.info("[{}] - email address validation successful", newMember);
     return Validation.valid(newMember);
   }
 }
