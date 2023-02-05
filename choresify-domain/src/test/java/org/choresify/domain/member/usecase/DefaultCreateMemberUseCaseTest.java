@@ -61,8 +61,8 @@ class DefaultCreateMemberUseCaseTest {
     var result = tested.execute(newMember);
 
     // then
-    assertThat(result.isInvalid()).isTrue();
-    assertThat(result.getError()).containsExactly("Email address already in use");
+    assertThat(result.isLeft()).isTrue();
+    assertThat(result.getLeft()).containsExactly("Email address already in use");
   }
 
   @Test
@@ -77,7 +77,8 @@ class DefaultCreateMemberUseCaseTest {
     var result = tested.execute(newMember);
 
     // then
-    assertThat(result.getError()).hasSize(1);
-    assertThat(result.getError()).containsExactly("Something went wrong");
+    assertThat(result.isLeft()).isTrue();
+    assertThat(result.getLeft()).hasSize(1);
+    assertThat(result.getLeft()).containsExactly("Something went wrong");
   }
 }

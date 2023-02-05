@@ -1,6 +1,7 @@
 package org.choresify.domain.member.usecase;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.vavr.control.Either;
 import io.vavr.control.Validation;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +19,8 @@ public final class DefaultCreateMemberUseCase implements CreateMemberUseCase {
   private final NewMemberValidator newMemberValidator;
 
   @Override
-  public Validation<List<String>, Member> execute(NewMember newMember) {
-    return newMemberValidator.validate(newMember).flatMap(this::insertMember);
+  public Either<List<String>, Member> execute(NewMember newMember) {
+    return newMemberValidator.validate(newMember).flatMap(this::insertMember).toEither();
   }
 
   private Validation<List<String>, Member> insertMember(NewMember validMember) {

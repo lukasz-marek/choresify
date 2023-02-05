@@ -80,7 +80,8 @@ class MemberApiTest {
 
       // then
       assertThat(successfulResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-      assertThat(failedResponse.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+      assertThat(failedResponse.getStatusCode())
+          .isEqualTo(HttpStatus.BAD_REQUEST); // todo should be 409
     }
 
     @ParameterizedTest

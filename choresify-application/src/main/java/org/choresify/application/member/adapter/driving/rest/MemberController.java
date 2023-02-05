@@ -3,7 +3,7 @@ package org.choresify.application.member.adapter.driving.rest;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CREATED;
 
-import io.vavr.control.Validation;
+import io.vavr.control.Either;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,22 +30,19 @@ final class MemberController {
     var newMember = memberDtoMapper.map(newMemberDto);
     var creationResult = transactionalRunner.execute(() -> createMemberUseCase.execute(newMember));
 
-    if (creationResult.isInvalid()) {
+    if (creationResult.isLeft()) {
       log.info(
-          "Failed to create new member [{}], reasons [{}]",
-          newMemberDto,
-          creationResult.getError());
-      handleFailure(newMemberDto, creationResult);
+          "Failed to create new member [{}], reasons [{}]", newMemberDto, creationResult.getLeft());
+      handleFailure(creationResult);
     }
 
     var memberDto = memberDtoMapper.map(creationResult.get());
     return ResponseEntity.status(CREATED).body(memberDto);
   }
 
-  private void handleFailure(
-      NewMemberDto newMemberDto, Validation<List<String>, ?> creationResult) {
+  private void handleFailure(Either<List<String>, ?> creationResult) {
     throw new ResponseStatusException(
-        BAD_REQUEST, "Request failed: %s".formatted(formatError(creationResult.getError())));
+        BAD_REQUEST, "Request failed: %s".formatted(formatError(creationResult.getLeft())));
   }
 
   private String formatError(List<String> errors) {
