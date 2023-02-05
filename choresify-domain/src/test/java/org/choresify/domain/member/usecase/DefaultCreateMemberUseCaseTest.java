@@ -5,6 +5,7 @@ import static org.mockito.Mockito.when;
 
 import io.vavr.control.Validation;
 import java.util.List;
+import java.util.Optional;
 import org.choresify.domain.member.model.Member;
 import org.choresify.domain.member.model.NewMember;
 import org.choresify.domain.member.port.Members;
@@ -31,7 +32,8 @@ class DefaultCreateMemberUseCaseTest {
             .version(37)
             .build();
     when(newMemberValidator.validate(newMember)).thenReturn(Validation.valid(newMember));
-    when(members.insert(newMember)).thenReturn(Validation.valid(expected));
+    when(members.findByEmail(newMember.getEmailAddress())).thenReturn(Optional.empty());
+    when(members.insert(newMember)).thenReturn(expected);
 
     // when
     var result = tested.execute(newMember);
@@ -41,19 +43,26 @@ class DefaultCreateMemberUseCaseTest {
   }
 
   @Test
-  void returnsInvalidWhenRepositoryRejects() {
+  void failsToCreateNewMemberWhenEmailAlreadyInUse() {
     // given
     var newMember =
         NewMember.builder().nickname("Adam Smith").emailAddress("adam@smith.com").build();
+    var existing =
+        Member.builder()
+            .nickname("John Smith")
+            .emailAddress("adam@smith.com")
+            .id(21)
+            .version(37)
+            .build();
     when(newMemberValidator.validate(newMember)).thenReturn(Validation.valid(newMember));
-    when(members.insert(newMember)).thenReturn(Validation.invalid(List.of("Something went wrong")));
+    when(members.findByEmail(newMember.getEmailAddress())).thenReturn(Optional.of(existing));
 
     // when
     var result = tested.execute(newMember);
 
     // then
-    assertThat(result.getError()).hasSize(1);
-    assertThat(result.getError()).containsExactly("Something went wrong");
+    assertThat(result.isInvalid()).isTrue();
+    assertThat(result.getError()).containsExactly("Email address already in use");
   }
 
   @Test

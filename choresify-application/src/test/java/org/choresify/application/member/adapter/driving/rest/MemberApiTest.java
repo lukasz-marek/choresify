@@ -58,6 +58,31 @@ class MemberApiTest {
       assertThat(createdMember.getVersion()).isEqualTo(0L);
     }
 
+    @Test
+    void failsToCreateTwoMembersWithTheSameEmail() {
+      // given
+      var newMember1 =
+          NewMemberDto.builder()
+              .nickname("Doctor Strange")
+              .emailAddress("doctor@strange.com")
+              .build();
+      var newMember2 =
+          NewMemberDto.builder()
+              .nickname("Somebody else")
+              .emailAddress("doctor@strange.com")
+              .build();
+
+      // when
+      var successfulResponse =
+          testRestTemplate.postForEntity(MEMBER_ENDPOINT, newMember1, MemberDto.class);
+      var failedResponse =
+          testRestTemplate.postForEntity(MEMBER_ENDPOINT, newMember2, MemberDto.class);
+
+      // then
+      assertThat(successfulResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+      assertThat(failedResponse.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+    }
+
     @ParameterizedTest
     @MethodSource("incompletePayloads")
     void failsToCreateMemberWhenPayloadIsIncomplete(

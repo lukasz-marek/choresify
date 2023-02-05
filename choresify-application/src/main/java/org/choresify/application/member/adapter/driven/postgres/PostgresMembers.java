@@ -1,8 +1,6 @@
 package org.choresify.application.member.adapter.driven.postgres;
 
-import io.vavr.control.Try;
-import io.vavr.control.Validation;
-import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.choresify.domain.member.model.Member;
@@ -21,12 +19,16 @@ class PostgresMembers implements Members {
   private final MemberEntityMapper memberEntityMapper;
 
   @Override
-  public Validation<List<String>, Member> insert(NewMember newMember) {
+  public Member insert(NewMember newMember) {
     var newEntity = memberEntityMapper.map(newMember);
-    return Try.of(() -> membersRepository.save(newEntity))
-        .map(memberEntityMapper::map)
-        .onFailure(throwable -> log.warn("Insertion of [{}] failed", newEntity, throwable))
-        .toValidation()
-        .mapError(throwable -> List.of(throwable.getMessage()));
+    log.info("Inserting [{}] into database", newEntity);
+    var created = membersRepository.save(newEntity);
+    log.info("Successfully inserted [{}] into database", created);
+    return memberEntityMapper.map(created);
+  }
+
+  @Override
+  public Optional<Member> findByEmail(String email) {
+    return membersRepository.findByEmailAddress(email).map(memberEntityMapper::map);
   }
 }

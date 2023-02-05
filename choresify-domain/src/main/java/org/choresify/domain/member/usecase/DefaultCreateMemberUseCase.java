@@ -24,8 +24,20 @@ public final class DefaultCreateMemberUseCase implements CreateMemberUseCase {
 
   private Validation<List<String>, Member> insertMember(NewMember validMember) {
     log.info("Validations successful - inserting [{}]", validMember);
+    if (isEmailInUse(validMember.getEmailAddress())) {
+      log.info(
+          "Member email [{}] already exists, insertion of [{}] canceled",
+          validMember.getEmailAddress(),
+          validMember);
+      return Validation.invalid(List.of("Email address already in use"));
+    }
     var member = members.insert(validMember);
     log.info("Finished insertion of [{}]", validMember);
-    return member;
+    return Validation.valid(member);
+  }
+
+  private boolean isEmailInUse(String email) {
+    var existingMemberWithSameEmail = members.findByEmail(email);
+    return existingMemberWithSameEmail.isPresent();
   }
 }
