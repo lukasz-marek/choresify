@@ -1,14 +1,14 @@
 package org.choresify.domain.member.usecase;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
-import io.vavr.control.Validation;
 import java.util.Optional;
 import org.choresify.domain.common.validation.Validator;
-import org.choresify.domain.error.Category;
-import org.choresify.domain.error.Failure;
-import org.choresify.domain.error.FailureDetails;
+import org.choresify.domain.exception.DomainException;
+import org.choresify.domain.exception.DomainException.ValidationException;
 import org.choresify.domain.member.model.Member;
 import org.choresify.domain.member.model.NewMember;
 import org.choresify.domain.member.port.Members;
@@ -34,7 +34,6 @@ class DefaultCreateMemberUseCaseTest {
             .id(21)
             .version(37)
             .build();
-    when(newMemberValidator.validate(newMember)).thenReturn(Validation.valid(newMember));
     when(members.findByEmail(newMember.getEmailAddress())).thenReturn(Optional.empty());
     when(members.insert(newMember)).thenReturn(expected);
 
@@ -42,7 +41,7 @@ class DefaultCreateMemberUseCaseTest {
     var result = tested.execute(newMember);
 
     // then
-    assertThat(result.get()).isEqualTo(expected);
+    assertThat(result).isEqualTo(expected);
   }
 
   @Test
@@ -57,16 +56,15 @@ class DefaultCreateMemberUseCaseTest {
             .id(21)
             .version(37)
             .build();
-    when(newMemberValidator.validate(newMember)).thenReturn(Validation.valid(newMember));
     when(members.findByEmail(newMember.getEmailAddress())).thenReturn(Optional.of(existing));
 
     // when
-    var result = tested.execute(newMember);
+    var result =
+        catchThrowableOfType(
+            () -> tested.execute(newMember), DomainException.FailedPreconditionException.class);
 
     // then
-    assertThat(result.isLeft()).isTrue();
-    assertThat(result.getLeft().getFailureDetails())
-        .containsExactly(FailureDetails.of(Category.PRECONDITION, "Email address already in use"));
+    assertThat(result.getMessage()).isEqualTo("Email address already in use");
   }
 
   @Test
@@ -74,16 +72,16 @@ class DefaultCreateMemberUseCaseTest {
     // given
     var newMember =
         NewMember.builder().nickname("Adam Smith").emailAddress("adam@smith.com").build();
-    when(newMemberValidator.validate(newMember))
-        .thenReturn(Validation.invalid(Failure.of(Category.VALIDATION, "Something went wrong")));
+    doThrow(new ValidationException("Something went wrong"))
+        .when(newMemberValidator)
+        .validate(newMember);
 
     // when
-    var result = tested.execute(newMember);
+    var result =
+        catchThrowableOfType(
+            () -> tested.execute(newMember), DomainException.ValidationException.class);
 
     // then
-    assertThat(result.isLeft()).isTrue();
-    assertThat(result.getLeft().getFailureDetails()).hasSize(1);
-    assertThat(result.getLeft().getFailureDetails())
-        .containsExactly(FailureDetails.of(Category.VALIDATION, "Something went wrong"));
+    assertThat(result.getMessage()).isEqualTo("Something went wrong");
   }
 }

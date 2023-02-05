@@ -30,10 +30,7 @@ class MemberApiTest {
               List.of("nickname")),
           Arguments.of(
               NewMemberDto.builder().nickname("doctor strange").emailAddress(null).build(),
-              List.of("email address")),
-          Arguments.of(
-              NewMemberDto.builder().nickname(null).emailAddress(null).build(),
-              List.of("nickname", "email address")));
+              List.of("email address")));
     }
 
     @Test
@@ -80,8 +77,7 @@ class MemberApiTest {
 
       // then
       assertThat(successfulResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-      assertThat(failedResponse.getStatusCode())
-          .isEqualTo(HttpStatus.BAD_REQUEST); // todo should be 409
+      assertThat(failedResponse.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
     }
 
     @ParameterizedTest

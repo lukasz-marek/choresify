@@ -1,9 +1,9 @@
 package org.choresify.domain.member.usecase;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
-import org.choresify.domain.error.Category;
-import org.choresify.domain.error.FailureDetails;
+import org.choresify.domain.exception.DomainException;
 import org.choresify.domain.member.model.NewMember;
 import org.junit.jupiter.api.Test;
 
@@ -11,57 +11,56 @@ class NewMemberValidatorTest {
   private final NewMemberValidator tested = new NewMemberValidator();
 
   @Test
-  void returnsErrorWhenNewMemberIsNull() {
+  void throwsExceptionWhenNewMemberIsNull() {
     // when
-    var result = tested.validate(null);
+    var result =
+        catchThrowableOfType(
+            () -> tested.validate(null), DomainException.ValidationException.class);
 
     // then
-    assertThat(result.isInvalid()).isTrue();
-    assertThat(result.getError().getFailureDetails())
-        .containsExactly(FailureDetails.of(Category.VALIDATION, "NewMember must not be null"));
+    assertThat(result).hasMessage("NewMember must not be null");
   }
 
   @Test
-  void returnsErrorWhenNicknameIsNull() {
+  void throwsExceptionWhenNicknameIsNull() {
     // given
     var member = NewMember.builder().nickname(null).emailAddress("email@example.com").build();
 
     // when
-    var result = tested.validate(member);
+    var result =
+        catchThrowableOfType(
+            () -> tested.validate(member), DomainException.ValidationException.class);
 
     // then
-    assertThat(result.isInvalid()).isTrue();
-    assertThat(result.getError().getFailureDetails())
-        .containsExactly(FailureDetails.of(Category.VALIDATION, "nickname must not be null"));
+    assertThat(result).hasMessage("nickname must not be null");
   }
 
   @Test
-  void returnsErrorWhenEmailAddressIsNull() {
+  void throwsExceptionWhenEmailAddressIsNull() {
     // given
     var member = NewMember.builder().nickname("a nickname").emailAddress(null).build();
 
     // when
-    var result = tested.validate(member);
+    var result =
+        catchThrowableOfType(
+            () -> tested.validate(member), DomainException.ValidationException.class);
 
     // then
-    assertThat(result.isInvalid()).isTrue();
-    assertThat(result.getError().getFailureDetails())
-        .containsExactly(FailureDetails.of(Category.VALIDATION, "email address must not be null"));
+    assertThat(result).hasMessage("email address must not be null");
   }
 
   @Test
-  void returnsErrorWhenEmailAddressIsNullAndNicknameIsNull() {
+  void doesNotThrowOnValidInput() {
     // given
-    var member = NewMember.builder().nickname(null).emailAddress(null).build();
+    var member =
+        NewMember.builder().nickname("a nickname").emailAddress("email@example.com").build();
 
     // when
-    var result = tested.validate(member);
+    var result =
+        catchThrowableOfType(
+            () -> tested.validate(member), DomainException.ValidationException.class);
 
     // then
-    assertThat(result.isInvalid()).isTrue();
-    assertThat(result.getError().getFailureDetails())
-        .containsExactlyInAnyOrder(
-            FailureDetails.of(Category.VALIDATION, "email address must not be null"),
-            FailureDetails.of(Category.VALIDATION, "nickname must not be null"));
+    assertThat(result).isNull();
   }
 }
