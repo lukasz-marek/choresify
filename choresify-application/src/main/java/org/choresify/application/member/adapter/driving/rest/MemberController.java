@@ -4,10 +4,12 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CREATED;
 
 import io.vavr.control.Either;
-import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.choresify.application.transaction.TransactionalRunner;
+import org.choresify.domain.error.Failure;
+import org.choresify.domain.error.FailureDetails;
 import org.choresify.domain.member.usecase.CreateMemberUseCase;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,12 +42,14 @@ final class MemberController {
     return ResponseEntity.status(CREATED).body(memberDto);
   }
 
-  private void handleFailure(Either<List<String>, ?> creationResult) {
-    throw new ResponseStatusException(
-        BAD_REQUEST, "Request failed: %s".formatted(formatError(creationResult.getLeft())));
+  private void handleFailure(Either<Failure, ?> creationResult) {
+    var errorMessage = formatErrorMessage(creationResult.getLeft());
+    throw new ResponseStatusException(BAD_REQUEST, "Request failed: %s".formatted(errorMessage));
   }
 
-  private String formatError(List<String> errors) {
-    return String.join(", ", errors);
+  private String formatErrorMessage(Failure failure) {
+    return failure.getFailureDetails().stream()
+        .map(FailureDetails::getMessage)
+        .collect(Collectors.joining(", "));
   }
 }
