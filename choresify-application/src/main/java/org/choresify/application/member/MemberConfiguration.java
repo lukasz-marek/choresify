@@ -1,5 +1,7 @@
 package org.choresify.application.member;
 
+import org.choresify.domain.common.validation.Validator;
+import org.choresify.domain.member.model.NewMember;
 import org.choresify.domain.member.port.Members;
 import org.choresify.domain.member.usecase.CreateMemberUseCase;
 import org.choresify.domain.member.usecase.DefaultCreateMemberUseCase;
@@ -11,12 +13,13 @@ import org.springframework.context.annotation.Configuration;
 class MemberConfiguration {
 
   @Bean
-  CreateMemberUseCase createMemberUseCase(Members members, NewMemberValidator newMemberValidator) {
+  CreateMemberUseCase createMemberUseCase(
+      Members members, Validator<NewMember> newMemberValidator) {
     return new DefaultCreateMemberUseCase(members, newMemberValidator);
   }
 
   @Bean
-  NewMemberValidator newMemberValidator() {
+  Validator<NewMember> newMemberValidator() {
     return new NewMemberValidator();
   }
 }

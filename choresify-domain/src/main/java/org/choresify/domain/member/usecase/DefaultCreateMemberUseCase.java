@@ -9,6 +9,7 @@ import io.vavr.control.Either;
 import io.vavr.control.Validation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.choresify.domain.common.validation.Validator;
 import org.choresify.domain.error.Failure;
 import org.choresify.domain.member.model.Member;
 import org.choresify.domain.member.model.NewMember;
@@ -20,7 +21,7 @@ public final class DefaultCreateMemberUseCase implements CreateMemberUseCase {
   @SuppressFBWarnings("EI_EXPOSE_REP2")
   private final Members members;
 
-  private final NewMemberValidator newMemberValidator;
+  private final Validator<NewMember> newMemberValidator;
 
   @Override
   public Either<Failure, Member> execute(NewMember newMember) {

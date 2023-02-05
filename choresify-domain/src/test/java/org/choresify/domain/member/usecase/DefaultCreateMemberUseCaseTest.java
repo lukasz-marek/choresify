@@ -5,6 +5,7 @@ import static org.mockito.Mockito.when;
 
 import io.vavr.control.Validation;
 import java.util.Optional;
+import org.choresify.domain.common.validation.Validator;
 import org.choresify.domain.error.Category;
 import org.choresify.domain.error.Failure;
 import org.choresify.domain.error.FailureDetails;
@@ -17,7 +18,7 @@ import org.mockito.Mockito;
 class DefaultCreateMemberUseCaseTest {
 
   private final Members members = Mockito.mock(Members.class);
-  private final NewMemberValidator newMemberValidator = Mockito.mock(NewMemberValidator.class);
+  private final Validator<NewMember> newMemberValidator = Mockito.mock(Validator.class);
   private final DefaultCreateMemberUseCase tested =
       new DefaultCreateMemberUseCase(members, newMemberValidator);
 

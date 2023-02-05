@@ -7,12 +7,14 @@ import static org.choresify.domain.error.Category.VALIDATION;
 import io.vavr.control.Validation;
 import lombok.extern.slf4j.Slf4j;
 import org.choresify.domain.common.validation.Validations;
+import org.choresify.domain.common.validation.Validator;
 import org.choresify.domain.error.Failure;
 import org.choresify.domain.error.FailureDetails;
 import org.choresify.domain.member.model.NewMember;
 
 @Slf4j
-public class NewMemberValidator {
+public final class NewMemberValidator implements Validator<NewMember> {
+  @Override
   public Validation<Failure, NewMember> validate(NewMember newMember) {
     log.info("Validating [{}]", newMember);
     return validateNotNull(newMember).flatMap(nonNullMember -> validateFields(newMember));
