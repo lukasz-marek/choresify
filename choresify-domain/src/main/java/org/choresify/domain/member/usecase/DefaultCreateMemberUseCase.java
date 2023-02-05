@@ -25,18 +25,26 @@ public final class DefaultCreateMemberUseCase implements CreateMemberUseCase {
 
   @Override
   public Either<Failure, Member> execute(NewMember newMember) {
-    return newMemberValidator.validate(newMember).flatMap(this::createNewMember).toEither();
+    return newMemberValidator
+        .validate(newMember)
+        .flatMap(this::checkEmailNotInUse)
+        .flatMap(this::createNewMember)
+        .toEither();
+  }
+
+  private Validation<Failure, NewMember> checkEmailNotInUse(NewMember newMember) {
+    if (isEmailInUse(newMember.getEmailAddress())) {
+      log.info(
+          "Member email [{}] already exists, insertion of [{}] canceled",
+          newMember.getEmailAddress(),
+          newMember);
+      return invalid(Failure.of(PRECONDITION, "Email address already in use"));
+    }
+    return valid(newMember);
   }
 
   private Validation<Failure, Member> createNewMember(NewMember validMember) {
-    log.info("Attempting to insert [{}]", validMember);
-    if (isEmailInUse(validMember.getEmailAddress())) {
-      log.info(
-          "Member email [{}] already exists, insertion of [{}] canceled",
-          validMember.getEmailAddress(),
-          validMember);
-      return invalid(Failure.of(PRECONDITION, "Email address already in use"));
-    }
+    log.info("Inserting [{}]", validMember);
     var member = members.insert(validMember);
     log.info("Finished insertion of [{}]", validMember);
     return valid(member);
