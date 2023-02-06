@@ -11,8 +11,8 @@ public sealed class DomainException extends RuntimeException {
     }
   }
 
-  public static final class FailedPreconditionException extends DomainException {
-    public FailedPreconditionException(String message) {
+  public static final class PreconditionFailedException extends DomainException {
+    public PreconditionFailedException(String message) {
       super(message);
     }
   }

@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import java.util.Optional;
 import org.choresify.domain.common.validation.Validator;
 import org.choresify.domain.exception.DomainException;
+import org.choresify.domain.exception.DomainException.PreconditionFailedException;
 import org.choresify.domain.exception.DomainException.ValidationException;
 import org.choresify.domain.member.model.Member;
 import org.choresify.domain.member.model.NewMember;
@@ -60,8 +61,7 @@ class DefaultCreateMemberUseCaseTest {
 
     // when
     var result =
-        catchThrowableOfType(
-            () -> tested.execute(newMember), DomainException.FailedPreconditionException.class);
+        catchThrowableOfType(() -> tested.execute(newMember), PreconditionFailedException.class);
 
     // then
     assertThat(result.getMessage()).isEqualTo("Email address already in use");

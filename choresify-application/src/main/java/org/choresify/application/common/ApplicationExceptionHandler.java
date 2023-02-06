@@ -3,7 +3,8 @@ package org.choresify.application.common;
 import java.time.Instant;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.choresify.domain.exception.DomainException;
+import org.choresify.domain.exception.DomainException.PreconditionFailedException;
+import org.choresify.domain.exception.DomainException.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -25,8 +26,8 @@ class ApplicationExceptionHandler extends ResponseEntityExceptionHandler {
         .build();
   }
 
-  @ExceptionHandler(DomainException.ValidationException.class)
-  ErrorResponse handleDomainValidationException(DomainException.ValidationException exception) {
+  @ExceptionHandler(ValidationException.class)
+  ErrorResponse handleDomainValidationException(ValidationException exception) {
     log.info("Handling exception", exception);
     return ErrorResponse.builder(exception, HttpStatus.BAD_REQUEST, exception.getMessage())
         .title("Something went wrong")
@@ -34,9 +35,8 @@ class ApplicationExceptionHandler extends ResponseEntityExceptionHandler {
         .build();
   }
 
-  @ExceptionHandler(DomainException.FailedPreconditionException.class)
-  ErrorResponse handlePreconditionFailedException(
-      DomainException.FailedPreconditionException exception) {
+  @ExceptionHandler(PreconditionFailedException.class)
+  ErrorResponse handlePreconditionFailedException(PreconditionFailedException exception) {
     log.info("Handling exception", exception);
     return ErrorResponse.builder(exception, HttpStatus.CONFLICT, exception.getMessage())
         .title("Something went wrong")
