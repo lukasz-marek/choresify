@@ -10,12 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @IntegrationTest
+@Transactional
 class PostgresMembersTest {
 
   @Autowired private PostgresMembers tested;
 
   @Nested
-  @Transactional
   class Insertion {
     @Test
     void insertionIsSuccessful() {
@@ -34,7 +34,6 @@ class PostgresMembersTest {
     }
   }
 
-  @Transactional
   @Nested
   class FindByEmail {
     @Test
@@ -59,6 +58,33 @@ class PostgresMembersTest {
       // then
       assertThat(result).isNotEmpty();
       assertThat(result).contains(existingMember);
+    }
+  }
+
+  @Nested
+  class FindById {
+    @Test
+    void returnsMemberWhenItExists() {
+      // given
+      var newMember =
+          NewMember.builder().emailAddress("email@example.com").nickname("a nickname").build();
+      var existingMember = tested.insert(newMember);
+
+      // when
+      var result = tested.findById(existingMember.getId());
+
+      // then
+      assertThat(result).isNotEmpty();
+      assertThat(result).contains(existingMember);
+    }
+
+    @Test
+    void returnsEmptyWhenMemberDoesNotExist() {
+      // when
+      var result = tested.findById(2137);
+
+      // then
+      assertThat(result).isEmpty();
     }
   }
 }

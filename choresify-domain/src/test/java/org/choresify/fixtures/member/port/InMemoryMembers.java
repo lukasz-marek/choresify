@@ -25,7 +25,7 @@ public final class InMemoryMembers implements Members {
   }
 
   @Override
-  public Optional<Member> get(long memberId) {
+  public Optional<Member> findById(long memberId) {
     return Optional.ofNullable(storage.get(memberId));
   }
 

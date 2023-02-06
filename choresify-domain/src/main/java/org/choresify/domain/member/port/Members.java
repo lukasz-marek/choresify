@@ -7,7 +7,7 @@ import org.choresify.domain.member.model.NewMember;
 public interface Members {
   Member insert(NewMember newMember);
 
-  Optional<Member> get(long memberId);
+  Optional<Member> findById(long memberId);
 
   Optional<Member> findByEmail(String email);
 }

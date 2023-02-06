@@ -28,8 +28,8 @@ class PostgresMembers implements Members {
   }
 
   @Override
-  public Optional<Member> get(long memberId) {
-    return Optional.empty();
+  public Optional<Member> findById(long memberId) {
+    return membersRepository.findById(memberId).map(memberEntityMapper::map);
   }
 
   @Override
