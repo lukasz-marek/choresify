@@ -2,9 +2,7 @@ package org.choresify.domain.member.usecase;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
-import static org.mockito.Mockito.when;
 
-import java.util.Optional;
 import org.choresify.domain.common.validation.Validator;
 import org.choresify.domain.exception.DomainException;
 import org.choresify.domain.exception.DomainException.PreconditionFailedException;
@@ -12,12 +10,12 @@ import org.choresify.domain.exception.DomainException.ValidationException;
 import org.choresify.domain.member.model.Member;
 import org.choresify.domain.member.model.NewMember;
 import org.choresify.domain.member.port.Members;
+import org.choresify.fixtures.member.port.InMemoryMembers;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 class DefaultCreateMemberUseCaseTest {
 
-  private final Members members = Mockito.mock(Members.class);
+  private final Members members = new InMemoryMembers();
   private final Validator<NewMember> newMemberValidator = (newMember) -> {};
   private final DefaultCreateMemberUseCase tested =
       new DefaultCreateMemberUseCase(members, newMemberValidator);
@@ -31,11 +29,9 @@ class DefaultCreateMemberUseCaseTest {
         Member.builder()
             .nickname("Adam Smith")
             .emailAddress("adam@smith.com")
-            .id(21)
-            .version(37)
+            .id(1)
+            .version(1)
             .build();
-    when(members.findByEmail(newMember.getEmailAddress())).thenReturn(Optional.empty());
-    when(members.insert(newMember)).thenReturn(expected);
 
     // when
     var result = tested.execute(newMember);
@@ -49,14 +45,7 @@ class DefaultCreateMemberUseCaseTest {
     // given
     var newMember =
         NewMember.builder().nickname("Adam Smith").emailAddress("adam@smith.com").build();
-    var existing =
-        Member.builder()
-            .nickname("John Smith")
-            .emailAddress("adam@smith.com")
-            .id(21)
-            .version(37)
-            .build();
-    when(members.findByEmail(newMember.getEmailAddress())).thenReturn(Optional.of(existing));
+    members.insert(newMember);
 
     // when
     var result =
