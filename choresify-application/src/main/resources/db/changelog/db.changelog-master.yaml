@@ -27,3 +27,13 @@ databaseChangeLog:
                   constraints:
                     nullable: false
             tableName: member
+  - changeSet:
+      id: 060220231218
+      author: lmarek
+      changes:
+        - createIndex:
+            columns:
+              - column:
+                  name: email_address
+            indexName: idx_email_address
+            tableName: member
