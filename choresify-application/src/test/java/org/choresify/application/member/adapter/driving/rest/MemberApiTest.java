@@ -130,5 +130,16 @@ class MemberApiTest {
       assertThat(memberFromApi.getId()).isEqualTo(existingMember.getId());
       assertThat(memberFromApi.getVersion()).isEqualTo(existingMember.getVersion());
     }
+
+    @Test
+    void getReturnsNotFoundWhenNoMemberExists() {
+      // when
+      var response = testRestTemplate.getForEntity(MEMBER_ENDPOINT + "/2137", MemberDto.class);
+
+      // then
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+      var memberFromApi = response.getBody();
+      assertThat(memberFromApi).isNull();
+    }
   }
 }
