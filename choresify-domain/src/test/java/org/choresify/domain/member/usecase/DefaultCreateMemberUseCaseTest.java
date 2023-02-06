@@ -2,7 +2,6 @@ package org.choresify.domain.member.usecase;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -19,7 +18,7 @@ import org.mockito.Mockito;
 class DefaultCreateMemberUseCaseTest {
 
   private final Members members = Mockito.mock(Members.class);
-  private final Validator<NewMember> newMemberValidator = Mockito.mock(Validator.class);
+  private final Validator<NewMember> newMemberValidator = (newMember) -> {};
   private final DefaultCreateMemberUseCase tested =
       new DefaultCreateMemberUseCase(members, newMemberValidator);
 
@@ -70,11 +69,14 @@ class DefaultCreateMemberUseCaseTest {
   @Test
   void rejectsMemberWhenValidatorRejectsIt() {
     // given
+    var tested =
+        new DefaultCreateMemberUseCase(
+            members,
+            (member) -> {
+              throw new ValidationException("Something went wrong");
+            });
     var newMember =
         NewMember.builder().nickname("Adam Smith").emailAddress("adam@smith.com").build();
-    doThrow(new ValidationException("Something went wrong"))
-        .when(newMemberValidator)
-        .validate(newMember);
 
     // when
     var result =
