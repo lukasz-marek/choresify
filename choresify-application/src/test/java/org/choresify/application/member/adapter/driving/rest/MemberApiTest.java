@@ -4,6 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import java.util.stream.Stream;
+import org.choresify.application.transaction.TransactionalRunner;
+import org.choresify.domain.member.model.Member;
+import org.choresify.domain.member.model.NewMember;
+import org.choresify.domain.member.port.Members;
 import org.choresify.fixtures.IntegrationTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -19,6 +23,12 @@ class MemberApiTest {
   private static final String MEMBER_ENDPOINT = "/api/v1/members";
 
   @Autowired private TestRestTemplate testRestTemplate;
+  @Autowired private Members members;
+  @Autowired private TransactionalRunner transactionalRunner;
+
+  private Member insert(NewMember newMember) {
+    return transactionalRunner.execute(() -> members.insert(newMember));
+  }
 
   @Nested
   class Create {
@@ -92,6 +102,33 @@ class MemberApiTest {
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
       var responseBody = response.getBody();
       assertThat(responseBody).contains(missingFieldNames);
+    }
+  }
+
+  @Nested
+  class Read {
+    @Test
+    void getReturnsMemberWhenItExists() {
+      // given
+      var existingMember =
+          insert(
+              NewMember.builder()
+                  .nickname("a new member")
+                  .emailAddress("member@example.com")
+                  .build());
+      // when
+      var response =
+          testRestTemplate.getForEntity(
+              MEMBER_ENDPOINT + "/" + existingMember.getId(), MemberDto.class);
+
+      // then
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+      var memberFromApi = response.getBody();
+      assertThat(memberFromApi).isNotNull();
+      assertThat(memberFromApi.getNickname()).isEqualTo(existingMember.getNickname());
+      assertThat(memberFromApi.getEmailAddress()).isEqualTo(existingMember.getEmailAddress());
+      assertThat(memberFromApi.getId()).isEqualTo(existingMember.getId());
+      assertThat(memberFromApi.getVersion()).isEqualTo(existingMember.getVersion());
     }
   }
 }
