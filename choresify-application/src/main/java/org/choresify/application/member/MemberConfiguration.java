@@ -21,8 +21,8 @@ class MemberConfiguration {
   }
 
   @Bean
-  GetMemberByIdUseCase getMemberByIdUseCase() {
-    return new DefaultGetMemberByIdUseCase();
+  GetMemberByIdUseCase getMemberByIdUseCase(Members members) {
+    return new DefaultGetMemberByIdUseCase(members);
   }
 
   @Bean

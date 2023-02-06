@@ -25,6 +25,11 @@ public final class InMemoryMembers implements Members {
   }
 
   @Override
+  public Optional<Member> get(long memberId) {
+    return Optional.ofNullable(storage.get(memberId));
+  }
+
+  @Override
   public Optional<Member> findByEmail(String email) {
     return storage.values().stream()
         .filter(member -> member.getEmailAddress().equals(email))
