@@ -9,10 +9,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.choresify.application.transaction.TransactionalRunner;
 import org.choresify.domain.member.usecase.CreateMemberUseCase;
 import org.choresify.domain.member.usecase.GetMemberByIdUseCase;
+import org.choresify.domain.member.usecase.UpdateMemberUseCase;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +27,7 @@ final class MemberController {
   private final TransactionalRunner transactionalRunner;
   private final CreateMemberUseCase createMemberUseCase;
   private final GetMemberByIdUseCase getMemberByIdUseCase;
+  private final UpdateMemberUseCase updateMemberUseCase;
   private final MemberDtoMapper memberDtoMapper;
 
   @PostMapping
@@ -42,5 +45,13 @@ final class MemberController {
         .map(memberDtoMapper::map)
         .map(memberDto -> ResponseEntity.status(OK).body(memberDto))
         .orElseGet(() -> ResponseEntity.status(NOT_FOUND).build());
+  }
+
+  @PutMapping("/{memberId}")
+  public ResponseEntity<MemberDto> putMember(@RequestBody MemberDto memberDto) {
+    var updateValue = memberDtoMapper.map(memberDto);
+    var updateResult = transactionalRunner.execute(() -> updateMemberUseCase.execute(updateValue));
+    var responseDto = memberDtoMapper.map(updateResult);
+    return ResponseEntity.ok(responseDto);
   }
 }
