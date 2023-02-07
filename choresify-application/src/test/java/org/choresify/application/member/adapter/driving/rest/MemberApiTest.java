@@ -17,6 +17,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
 
 @IntegrationTest
 class MemberApiTest {
@@ -140,6 +141,39 @@ class MemberApiTest {
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
       var memberFromApi = response.getBody();
       assertThat(memberFromApi).isNull();
+    }
+  }
+
+  @Nested
+  class Update {
+    @Test
+    void updateIsSuccessfulWhenDocumentExistsAndOptimisticLockingSucceeds() {
+      // given
+      var existingMember =
+          insert(NewMember.builder().nickname("Alan").emailAddress("alan@kay.com").build());
+      var updateInput =
+          MemberDto.builder()
+              .nickname("John")
+              .emailAddress("john@mccarthy.com")
+              .version(existingMember.getVersion())
+              .id(existingMember.getId())
+              .build();
+
+      // when
+      var updated =
+          testRestTemplate.exchange(
+              RequestEntity.put(MEMBER_ENDPOINT + "/{memberId}", existingMember.getId())
+                  .body(updateInput),
+              MemberDto.class);
+
+      // then
+      assertThat(updated.getStatusCode()).isEqualTo(HttpStatus.OK);
+      var memberAfterUpdate = updated.getBody();
+      assertThat(memberAfterUpdate).isNotNull();
+      assertThat(memberAfterUpdate.getVersion()).isEqualTo(updateInput.getVersion() + 1);
+      assertThat(memberAfterUpdate.getId()).isEqualTo(updateInput.getId());
+      assertThat(memberAfterUpdate.getNickname()).isEqualTo(updateInput.getNickname());
+      assertThat(memberAfterUpdate.getEmailAddress()).isEqualTo(updateInput.getEmailAddress());
     }
   }
 }
