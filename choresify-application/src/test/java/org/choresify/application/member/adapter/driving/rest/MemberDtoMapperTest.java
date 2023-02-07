@@ -81,4 +81,43 @@ class MemberDtoMapperTest {
       assertThat(newMember.getNickname()).isNull();
     }
   }
+
+  @Nested
+  class MemberDtoMapping {
+    @Test
+    void mapsMemberDtoToMember() {
+      // given
+      var memberDto =
+          MemberDto.builder()
+              .id(21)
+              .nickname("John Snow")
+              .emailAddress("john@snow.com")
+              .version(37)
+              .build();
+
+      // when
+      var member = tested.map(memberDto);
+
+      // then
+      assertThat(member.getId()).isEqualTo(21);
+      assertThat(member.getEmailAddress()).isEqualTo("john@snow.com");
+      assertThat(member.getNickname()).isEqualTo("John Snow");
+      assertThat(member.getVersion()).isEqualTo(37);
+    }
+
+    @Test
+    void nullsAreMappedToNulls() {
+      // given
+      var memberDto = MemberDto.builder().build();
+
+      // when
+      var member = tested.map(memberDto);
+
+      // then
+      assertThat(member.getId()).isEqualTo(0);
+      assertThat(member.getEmailAddress()).isNull();
+      assertThat(member.getNickname()).isNull();
+      assertThat(member.getVersion()).isEqualTo(0);
+    }
+  }
 }

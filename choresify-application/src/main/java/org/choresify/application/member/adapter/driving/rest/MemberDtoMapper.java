@@ -14,4 +14,6 @@ public interface MemberDtoMapper {
   MemberDto map(Member member);
 
   NewMember map(NewMemberDto newMemberDto);
+
+  Member map(MemberDto memberDto);
 }
