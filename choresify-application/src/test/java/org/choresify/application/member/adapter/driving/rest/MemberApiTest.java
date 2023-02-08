@@ -145,7 +145,7 @@ class MemberApiTest {
   @Nested
   class Update {
     @Test
-    void updateIsSuccessfulWhenDocumentExists() {
+    void updateIsSuccessfulWhenMemberExists() {
       // given
       var existingMember =
           insert(NewMember.builder().nickname("Alan").emailAddress("alan@kay.com").build());

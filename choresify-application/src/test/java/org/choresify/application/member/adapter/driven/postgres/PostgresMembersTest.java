@@ -2,6 +2,7 @@ package org.choresify.application.member.adapter.driven.postgres;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.choresify.domain.member.model.Member;
 import org.choresify.domain.member.model.NewMember;
 import org.choresify.fixtures.IntegrationTest;
 import org.junit.jupiter.api.Nested;
@@ -84,6 +85,46 @@ class PostgresMembersTest {
 
       // then
       assertThat(result).isEmpty();
+    }
+  }
+
+  @Nested
+  class Save {
+    @Test
+    void createsNewMemberWhenItDoesNotExist() {
+      // given
+      var newMember =
+          Member.builder().emailAddress("email@example.com").nickname("a nickname").build();
+
+      // when
+      var afterSave = tested.save(newMember);
+
+      // then
+      assertThat(afterSave.getId()).isPositive();
+      assertThat(afterSave.getNickname()).isEqualTo("a nickname");
+      assertThat(afterSave.getEmailAddress()).isEqualTo("email@example.com");
+    }
+
+    @Test
+    void overridesMemberWhenItExists() {
+      // given
+      var existing =
+          tested.insert(
+              NewMember.builder().emailAddress("email@example.com").nickname("a nickname").build());
+      var override =
+          Member.builder()
+              .id(existing.getId())
+              .emailAddress("different@example.com")
+              .nickname("a different nickname")
+              .build();
+
+      // when
+      var afterSave = tested.save(override);
+
+      // then
+      assertThat(afterSave.getId()).isEqualTo(existing.getId());
+      assertThat(afterSave.getNickname()).isEqualTo("a different nickname");
+      assertThat(afterSave.getEmailAddress()).isEqualTo("different@example.com");
     }
   }
 }

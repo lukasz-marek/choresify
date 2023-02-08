@@ -29,7 +29,11 @@ class PostgresMembers implements Members {
 
   @Override
   public Member save(Member member) {
-    return null;
+    var forUpdate = memberEntityMapper.map(member);
+    log.info("Saving [{}] into database", forUpdate);
+    var created = membersRepository.save(forUpdate);
+    log.info("Successfully saved [{}] into database", created);
+    return memberEntityMapper.map(created);
   }
 
   @Override
