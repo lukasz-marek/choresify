@@ -25,6 +25,19 @@ public final class InMemoryMembers implements Members {
   }
 
   @Override
+  public Member update(Member member) {
+    var newRevision =
+        Member.builder()
+            .version(member.getVersion() + 1)
+            .id(member.getId())
+            .nickname(member.getNickname())
+            .emailAddress(member.getEmailAddress())
+            .build();
+    storage.put(newRevision.getId(), newRevision);
+    return newRevision;
+  }
+
+  @Override
   public Optional<Member> findById(long memberId) {
     return Optional.ofNullable(storage.get(memberId));
   }

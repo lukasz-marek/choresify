@@ -11,14 +11,14 @@ class MemberValidatorTest {
   private final MemberValidator tested = new MemberValidator();
 
   @Test
-  void throwsExceptionWhenNewMemberIsNull() {
+  void throwsExceptionWhenMemberIsNull() {
     // when
     var result =
         catchThrowableOfType(
             () -> tested.validate(null), DomainException.ValidationException.class);
 
     // then
-    assertThat(result).hasMessage("NewMember must not be null");
+    assertThat(result).hasMessage("Member must not be null");
   }
 
   @Test

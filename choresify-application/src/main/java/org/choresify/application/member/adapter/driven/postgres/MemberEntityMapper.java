@@ -14,4 +14,6 @@ interface MemberEntityMapper {
   MemberEntity map(NewMember newMember);
 
   Member map(MemberEntity member);
+
+  MemberEntity map(Member member);
 }

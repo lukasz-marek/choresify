@@ -2,6 +2,7 @@ package org.choresify.application.member.adapter.driven.postgres;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.choresify.domain.member.model.Member;
 import org.choresify.domain.member.model.NewMember;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -85,6 +86,47 @@ class MemberEntityMapperTest {
       assertThat(member.getVersion()).isEqualTo(0);
       assertThat(member.getNickname()).isEqualTo(null);
       assertThat(member.getEmailAddress()).isEqualTo(null);
+    }
+  }
+
+  @Nested
+  class MemberToEntity {
+    @Test
+    void allFieldsAreMapped() {
+      // given
+      var member =
+          Member.builder()
+              .emailAddress("email@example.com")
+              .nickname("a nickname")
+              .version(21L)
+              .id(37L)
+              .build();
+
+      // when
+      var entity = tested.map(member);
+
+      // then
+      assertThat(entity).isNotNull();
+      assertThat(entity.getId()).isEqualTo(37);
+      assertThat(entity.getVersion()).isEqualTo(21);
+      assertThat(entity.getNickname()).isEqualTo("a nickname");
+      assertThat(entity.getEmailAddress()).isEqualTo("email@example.com");
+    }
+
+    @Test
+    void nullsAreMappedToNulls() {
+      // given
+      var member = Member.builder().emailAddress(null).nickname(null).build();
+
+      // when
+      var entity = tested.map(member);
+
+      // then
+      assertThat(entity).isNotNull();
+      assertThat(entity.getId()).isEqualTo(0);
+      assertThat(entity.getVersion()).isEqualTo(0);
+      assertThat(entity.getNickname()).isEqualTo(null);
+      assertThat(entity.getEmailAddress()).isEqualTo(null);
     }
   }
 }
