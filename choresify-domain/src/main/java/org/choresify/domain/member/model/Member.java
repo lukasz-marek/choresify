@@ -9,5 +9,4 @@ public class Member {
   long id;
   String nickname;
   String emailAddress;
-  long version;
 }

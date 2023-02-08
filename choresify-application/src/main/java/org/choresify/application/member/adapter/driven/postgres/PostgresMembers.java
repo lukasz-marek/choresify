@@ -28,7 +28,7 @@ class PostgresMembers implements Members {
   }
 
   @Override
-  public Member update(Member member) {
+  public Member save(Member member) {
     return null;
   }
 

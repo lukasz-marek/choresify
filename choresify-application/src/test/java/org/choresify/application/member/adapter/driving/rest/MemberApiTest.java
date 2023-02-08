@@ -63,7 +63,6 @@ class MemberApiTest {
       assertThat(createdMember.getNickname()).isEqualTo("Doctor Strange");
       assertThat(createdMember.getEmailAddress()).isEqualTo("doctor@strange.com");
       assertThat(createdMember.getId()).isPositive();
-      assertThat(createdMember.getVersion()).isEqualTo(0L);
     }
 
     @Test
@@ -129,7 +128,6 @@ class MemberApiTest {
       assertThat(memberFromApi.getNickname()).isEqualTo(existingMember.getNickname());
       assertThat(memberFromApi.getEmailAddress()).isEqualTo(existingMember.getEmailAddress());
       assertThat(memberFromApi.getId()).isEqualTo(existingMember.getId());
-      assertThat(memberFromApi.getVersion()).isEqualTo(existingMember.getVersion());
     }
 
     @Test
@@ -147,7 +145,7 @@ class MemberApiTest {
   @Nested
   class Update {
     @Test
-    void updateIsSuccessfulWhenDocumentExistsAndOptimisticLockingSucceeds() {
+    void updateIsSuccessfulWhenDocumentExists() {
       // given
       var existingMember =
           insert(NewMember.builder().nickname("Alan").emailAddress("alan@kay.com").build());
@@ -155,7 +153,6 @@ class MemberApiTest {
           MemberDto.builder()
               .nickname("John")
               .emailAddress("john@mccarthy.com")
-              .version(existingMember.getVersion())
               .id(existingMember.getId())
               .build();
 
@@ -170,7 +167,6 @@ class MemberApiTest {
       assertThat(updated.getStatusCode()).isEqualTo(HttpStatus.OK);
       var memberAfterUpdate = updated.getBody();
       assertThat(memberAfterUpdate).isNotNull();
-      assertThat(memberAfterUpdate.getVersion()).isEqualTo(updateInput.getVersion() + 1);
       assertThat(memberAfterUpdate.getId()).isEqualTo(updateInput.getId());
       assertThat(memberAfterUpdate.getNickname()).isEqualTo(updateInput.getNickname());
       assertThat(memberAfterUpdate.getEmailAddress()).isEqualTo(updateInput.getEmailAddress());

@@ -30,7 +30,6 @@ class DefaultCreateMemberUseCaseTest {
             .nickname("Adam Smith")
             .emailAddress("adam@smith.com")
             .id(1)
-            .version(1)
             .build();
 
     // when

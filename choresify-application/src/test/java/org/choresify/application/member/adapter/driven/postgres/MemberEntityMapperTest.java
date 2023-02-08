@@ -25,7 +25,6 @@ class MemberEntityMapperTest {
       // then
       assertThat(entity).isNotNull();
       assertThat(entity.getId()).isNull();
-      assertThat(entity.getVersion()).isNull();
       assertThat(entity.getNickname()).isEqualTo("a nickname");
       assertThat(entity.getEmailAddress()).isEqualTo("email@example.com");
     }
@@ -41,7 +40,6 @@ class MemberEntityMapperTest {
       // then
       assertThat(entity).isNotNull();
       assertThat(entity.getId()).isNull();
-      assertThat(entity.getVersion()).isNull();
       assertThat(entity.getNickname()).isNull();
       assertThat(entity.getEmailAddress()).isNull();
     }
@@ -56,7 +54,6 @@ class MemberEntityMapperTest {
           MemberEntity.builder()
               .emailAddress("email@example.com")
               .nickname("a nickname")
-              .version(21L)
               .id(37L)
               .build();
 
@@ -66,7 +63,6 @@ class MemberEntityMapperTest {
       // then
       assertThat(member).isNotNull();
       assertThat(member.getId()).isEqualTo(37);
-      assertThat(member.getVersion()).isEqualTo(21);
       assertThat(member.getNickname()).isEqualTo("a nickname");
       assertThat(member.getEmailAddress()).isEqualTo("email@example.com");
     }
@@ -74,8 +70,7 @@ class MemberEntityMapperTest {
     @Test
     void nullsAreMappedToNulls() {
       // given
-      var entity =
-          MemberEntity.builder().emailAddress(null).nickname(null).version(null).id(null).build();
+      var entity = MemberEntity.builder().emailAddress(null).nickname(null).id(null).build();
 
       // when
       var member = tested.map(entity);
@@ -83,7 +78,6 @@ class MemberEntityMapperTest {
       // then
       assertThat(member).isNotNull();
       assertThat(member.getId()).isEqualTo(0);
-      assertThat(member.getVersion()).isEqualTo(0);
       assertThat(member.getNickname()).isEqualTo(null);
       assertThat(member.getEmailAddress()).isEqualTo(null);
     }
@@ -95,12 +89,7 @@ class MemberEntityMapperTest {
     void allFieldsAreMapped() {
       // given
       var member =
-          Member.builder()
-              .emailAddress("email@example.com")
-              .nickname("a nickname")
-              .version(21L)
-              .id(37L)
-              .build();
+          Member.builder().emailAddress("email@example.com").nickname("a nickname").id(37L).build();
 
       // when
       var entity = tested.map(member);
@@ -108,7 +97,6 @@ class MemberEntityMapperTest {
       // then
       assertThat(entity).isNotNull();
       assertThat(entity.getId()).isEqualTo(37);
-      assertThat(entity.getVersion()).isEqualTo(21);
       assertThat(entity.getNickname()).isEqualTo("a nickname");
       assertThat(entity.getEmailAddress()).isEqualTo("email@example.com");
     }
@@ -124,7 +112,6 @@ class MemberEntityMapperTest {
       // then
       assertThat(entity).isNotNull();
       assertThat(entity.getId()).isEqualTo(0);
-      assertThat(entity.getVersion()).isEqualTo(0);
       assertThat(entity.getNickname()).isEqualTo(null);
       assertThat(entity.getEmailAddress()).isEqualTo(null);
     }

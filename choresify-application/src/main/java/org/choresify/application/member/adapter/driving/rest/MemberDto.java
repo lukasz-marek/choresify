@@ -9,5 +9,4 @@ public class MemberDto {
   long id;
   String nickname;
   String emailAddress;
-  long version;
 }

@@ -21,11 +21,6 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     unique: true
-              - column:
-                  name: version
-                  type: bigint
-                  constraints:
-                    nullable: false
             tableName: member
   - changeSet:
       id: 060220231218

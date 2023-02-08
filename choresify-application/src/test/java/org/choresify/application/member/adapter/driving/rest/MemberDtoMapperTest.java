@@ -16,12 +16,7 @@ class MemberDtoMapperTest {
     void mapsMemberToMemberDto() {
       // given
       var member =
-          Member.builder()
-              .id(21)
-              .nickname("John Snow")
-              .emailAddress("john@snow.com")
-              .version(37)
-              .build();
+          Member.builder().id(21).nickname("John Snow").emailAddress("john@snow.com").build();
 
       // when
       var memberDto = tested.map(member);
@@ -30,7 +25,6 @@ class MemberDtoMapperTest {
       assertThat(memberDto.getId()).isEqualTo(21);
       assertThat(memberDto.getEmailAddress()).isEqualTo("john@snow.com");
       assertThat(memberDto.getNickname()).isEqualTo("John Snow");
-      assertThat(memberDto.getVersion()).isEqualTo(37);
     }
 
     @Test
@@ -45,7 +39,6 @@ class MemberDtoMapperTest {
       assertThat(memberDto.getId()).isEqualTo(0);
       assertThat(memberDto.getEmailAddress()).isNull();
       assertThat(memberDto.getNickname()).isNull();
-      assertThat(memberDto.getVersion()).isEqualTo(0);
     }
   }
 
@@ -88,12 +81,7 @@ class MemberDtoMapperTest {
     void mapsMemberDtoToMember() {
       // given
       var memberDto =
-          MemberDto.builder()
-              .id(21)
-              .nickname("John Snow")
-              .emailAddress("john@snow.com")
-              .version(37)
-              .build();
+          MemberDto.builder().id(21).nickname("John Snow").emailAddress("john@snow.com").build();
 
       // when
       var member = tested.map(memberDto);
@@ -102,7 +90,6 @@ class MemberDtoMapperTest {
       assertThat(member.getId()).isEqualTo(21);
       assertThat(member.getEmailAddress()).isEqualTo("john@snow.com");
       assertThat(member.getNickname()).isEqualTo("John Snow");
-      assertThat(member.getVersion()).isEqualTo(37);
     }
 
     @Test
@@ -117,7 +104,6 @@ class MemberDtoMapperTest {
       assertThat(member.getId()).isEqualTo(0);
       assertThat(member.getEmailAddress()).isNull();
       assertThat(member.getNickname()).isNull();
-      assertThat(member.getVersion()).isEqualTo(0);
     }
   }
 }

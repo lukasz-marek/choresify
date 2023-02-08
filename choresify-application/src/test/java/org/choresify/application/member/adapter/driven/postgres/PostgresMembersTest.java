@@ -28,7 +28,6 @@ class PostgresMembersTest {
 
       // then
       assertThat(afterSave.getId()).isPositive();
-      assertThat(afterSave.getVersion()).isEqualTo(0L);
       assertThat(afterSave.getNickname()).isEqualTo("a nickname");
       assertThat(afterSave.getEmailAddress()).isEqualTo("email@example.com");
     }

@@ -18,17 +18,15 @@ public final class InMemoryMembers implements Members {
             .nickname(newMember.getNickname())
             .emailAddress(newMember.getEmailAddress())
             .id(nextId++)
-            .version(1)
             .build();
     storage.put(member.getId(), member);
     return member;
   }
 
   @Override
-  public Member update(Member member) {
+  public Member save(Member member) {
     var newRevision =
         Member.builder()
-            .version(member.getVersion() + 1)
             .id(member.getId())
             .nickname(member.getNickname())
             .emailAddress(member.getEmailAddress())
