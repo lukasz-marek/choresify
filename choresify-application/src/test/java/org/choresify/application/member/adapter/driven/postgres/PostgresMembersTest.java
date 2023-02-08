@@ -32,6 +32,20 @@ class PostgresMembersTest {
       assertThat(afterSave.getNickname()).isEqualTo("a nickname");
       assertThat(afterSave.getEmailAddress()).isEqualTo("email@example.com");
     }
+
+    @Test
+    void insertionIsPersistent() {
+      // given
+      var newMember =
+          NewMember.builder().emailAddress("email@example.com").nickname("a nickname").build();
+
+      // when
+      var afterSave = tested.insert(newMember);
+      var read = tested.findById(afterSave.getId());
+
+      // then
+      assertThat(read).contains(afterSave);
+    }
   }
 
   @Nested
@@ -106,6 +120,20 @@ class PostgresMembersTest {
     }
 
     @Test
+    void creationIsPersistent() {
+      // given
+      var newMember =
+          Member.builder().emailAddress("email@example.com").nickname("a nickname").build();
+
+      // when
+      var afterSave = tested.save(newMember);
+      var read = tested.findById(afterSave.getId());
+
+      // then
+      assertThat(read).contains(afterSave);
+    }
+
+    @Test
     void overridesMemberWhenItExists() {
       // given
       var existing =
@@ -125,6 +153,27 @@ class PostgresMembersTest {
       assertThat(afterSave.getId()).isEqualTo(existing.getId());
       assertThat(afterSave.getNickname()).isEqualTo("a different nickname");
       assertThat(afterSave.getEmailAddress()).isEqualTo("different@example.com");
+    }
+
+    @Test
+    void updateIsPersistent() {
+      // given
+      var existing =
+          tested.insert(
+              NewMember.builder().emailAddress("email@example.com").nickname("a nickname").build());
+      var override =
+          Member.builder()
+              .id(existing.getId())
+              .emailAddress("different@example.com")
+              .nickname("a different nickname")
+              .build();
+
+      // when
+      var afterSave = tested.save(override);
+      var read = tested.findById(afterSave.getId());
+
+      // then
+      assertThat(read).contains(afterSave);
     }
   }
 }
