@@ -1,4 +1,4 @@
-package org.choresify.application.member.adapter.driven.postgres;
+package org.choresify.application.member.adapter.driven.postgres.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

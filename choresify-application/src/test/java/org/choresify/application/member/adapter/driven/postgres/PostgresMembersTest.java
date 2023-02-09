@@ -13,8 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 @IntegrationTest
 @Transactional
 class PostgresMembersTest {
+  private final PostgresMembers tested;
 
-  @Autowired private PostgresMembers tested;
+  @Autowired
+  PostgresMembersTest(PostgresMembers postgresMembers) {
+    this.tested = postgresMembers;
+  }
 
   @Nested
   class Insertion {

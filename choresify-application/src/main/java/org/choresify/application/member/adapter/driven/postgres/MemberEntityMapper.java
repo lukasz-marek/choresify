@@ -1,5 +1,6 @@
 package org.choresify.application.member.adapter.driven.postgres;
 
+import org.choresify.application.member.adapter.driven.postgres.entity.MemberEntity;
 import org.choresify.domain.member.model.Member;
 import org.choresify.domain.member.model.NewMember;
 import org.mapstruct.Mapper;
