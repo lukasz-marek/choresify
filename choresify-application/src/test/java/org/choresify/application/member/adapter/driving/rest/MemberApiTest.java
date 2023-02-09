@@ -34,7 +34,7 @@ class MemberApiTest {
   @Nested
   class Create {
 
-    static Stream<Arguments> incompletePayloads() {
+    static Stream<Arguments> incompleteNewMemberPayloads() {
       return Stream.of(
           Arguments.of(
               NewMemberDto.builder().nickname(null).emailAddress("doctor@strange.com").build(),
@@ -91,7 +91,7 @@ class MemberApiTest {
     }
 
     @ParameterizedTest
-    @MethodSource("incompletePayloads")
+    @MethodSource("incompleteNewMemberPayloads")
     void failsToCreateMemberWhenPayloadIsIncomplete(
         NewMemberDto incompleteNewMember, List<String> missingFieldNames) {
       // when
@@ -144,6 +144,20 @@ class MemberApiTest {
 
   @Nested
   class Update {
+    static Stream<Arguments> incompleteMemberPayloads() {
+      return Stream.of(
+          Arguments.of(
+              MemberDto.builder()
+                  .nickname(null)
+                  .emailAddress("doctor@strange.com")
+                  .id(2137L)
+                  .build(),
+              List.of("nickname")),
+          Arguments.of(
+              MemberDto.builder().nickname("doctor strange").emailAddress(null).id(2137L).build(),
+              List.of("email address")));
+    }
+
     @Test
     void updateIsSuccessfulWhenMemberExists() {
       // given
@@ -170,6 +184,53 @@ class MemberApiTest {
       assertThat(memberAfterUpdate.getId()).isEqualTo(updateInput.getId());
       assertThat(memberAfterUpdate.getNickname()).isEqualTo(updateInput.getNickname());
       assertThat(memberAfterUpdate.getEmailAddress()).isEqualTo(updateInput.getEmailAddress());
+    }
+
+    @Test
+    void updateIsRejectedWhenMemberDoesNotExist() {
+      // given
+      var updateInput =
+          MemberDto.builder().nickname("John").emailAddress("john@mccarthy.com").id(2137).build();
+
+      // when
+      var updated =
+          testRestTemplate.exchange(
+              RequestEntity.put(MEMBER_ENDPOINT + "/2137").body(updateInput), String.class);
+
+      // then
+      assertThat(updated.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    void updateIsRejectedWhenIdFromUriDiffersFromBody() {
+      // given
+      var updateInput =
+          MemberDto.builder().nickname("John").emailAddress("john@mccarthy.com").id(2137).build();
+
+      // when
+      var updated =
+          testRestTemplate.exchange(
+              RequestEntity.put(MEMBER_ENDPOINT + "/7312").body(updateInput), String.class);
+
+      // then
+      assertThat(updated.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @ParameterizedTest
+    @MethodSource("incompleteMemberPayloads")
+    void failsToUpdateMemberWhenPayloadIsIncomplete(
+        MemberDto incompleteMember, List<String> missingFieldNames) {
+      // when
+      var updated =
+          testRestTemplate.exchange(
+              RequestEntity.put(MEMBER_ENDPOINT + "/" + incompleteMember.getId())
+                  .body(incompleteMember),
+              String.class);
+
+      // then
+      assertThat(updated.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+      var responseBody = updated.getBody();
+      assertThat(responseBody).contains(missingFieldNames);
     }
   }
 }

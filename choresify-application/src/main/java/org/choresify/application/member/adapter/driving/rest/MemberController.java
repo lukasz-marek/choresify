@@ -4,12 +4,14 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.choresify.application.transaction.TransactionalRunner;
 import org.choresify.domain.member.usecase.CreateMemberUseCase;
 import org.choresify.domain.member.usecase.GetMemberByIdUseCase;
 import org.choresify.domain.member.usecase.UpdateMemberUseCase;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/v1/members")
@@ -29,6 +32,15 @@ final class MemberController {
   private final GetMemberByIdUseCase getMemberByIdUseCase;
   private final UpdateMemberUseCase updateMemberUseCase;
   private final MemberDtoMapper memberDtoMapper;
+
+  private static void checkMemberId(MemberDto memberDto, long memberId) {
+    if (!Objects.equals(memberId, memberDto.getId())) {
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST,
+          "Ambiguous resource id: found %s in body and %s in uri"
+              .formatted(memberDto.getId(), memberId));
+    }
+  }
 
   @PostMapping
   public ResponseEntity<MemberDto> postMember(@RequestBody NewMemberDto newMemberDto) {
@@ -48,7 +60,9 @@ final class MemberController {
   }
 
   @PutMapping("/{memberId}")
-  public ResponseEntity<MemberDto> putMember(@RequestBody MemberDto memberDto) {
+  public ResponseEntity<MemberDto> putMember(
+      @RequestBody MemberDto memberDto, @PathVariable("memberId") long memberId) {
+    checkMemberId(memberDto, memberId);
     var updateValue = memberDtoMapper.map(memberDto);
     var updateResult = transactionalRunner.execute(() -> updateMemberUseCase.execute(updateValue));
     var responseDto = memberDtoMapper.map(updateResult);

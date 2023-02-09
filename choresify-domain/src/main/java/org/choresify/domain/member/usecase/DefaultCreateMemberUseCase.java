@@ -4,7 +4,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.choresify.domain.common.validation.Validator;
-import org.choresify.domain.exception.DomainException.PreconditionFailedException;
+import org.choresify.domain.exception.DomainException.ConflictingDataException;
 import org.choresify.domain.member.model.Member;
 import org.choresify.domain.member.model.NewMember;
 import org.choresify.domain.member.port.Members;
@@ -25,7 +25,7 @@ public final class DefaultCreateMemberUseCase implements CreateMemberUseCase {
           "Member email [{}] already exists, insertion of [{}] canceled",
           newMember.getEmailAddress(),
           newMember);
-      throw new PreconditionFailedException("Email address already in use");
+      throw new ConflictingDataException("Email address already in use");
     }
     log.info("Saving [{}]", newMember);
     return members.insert(newMember);

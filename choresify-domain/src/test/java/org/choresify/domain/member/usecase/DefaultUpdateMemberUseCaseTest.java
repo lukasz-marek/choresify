@@ -1,10 +1,10 @@
 package org.choresify.domain.member.usecase;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
-import org.assertj.core.api.Assertions;
 import org.choresify.domain.common.validation.Validator;
-import org.choresify.domain.exception.DomainException.PreconditionFailedException;
+import org.choresify.domain.exception.DomainException.NoSuchEntityException;
 import org.choresify.domain.exception.DomainException.ValidationException;
 import org.choresify.domain.member.model.Member;
 import org.choresify.domain.member.model.NewMember;
@@ -51,9 +51,7 @@ class DefaultUpdateMemberUseCaseTest {
             .build();
 
     // when
-    var result =
-        Assertions.catchThrowableOfType(
-            () -> tested.execute(forUpdate), PreconditionFailedException.class);
+    var result = catchThrowableOfType(() -> tested.execute(forUpdate), NoSuchEntityException.class);
 
     // then
     assertThat(result).hasMessageContaining("Cannot update non-existent member");
@@ -76,8 +74,7 @@ class DefaultUpdateMemberUseCaseTest {
             .build();
 
     // when
-    var result =
-        Assertions.catchThrowableOfType(() -> tested.execute(forUpdate), ValidationException.class);
+    var result = catchThrowableOfType(() -> tested.execute(forUpdate), ValidationException.class);
 
     // then
     assertThat(result).hasMessageContaining("validation failed");

@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
 import org.choresify.domain.common.validation.Validator;
 import org.choresify.domain.exception.DomainException;
-import org.choresify.domain.exception.DomainException.PreconditionFailedException;
+import org.choresify.domain.exception.DomainException.ConflictingDataException;
 import org.choresify.domain.exception.DomainException.ValidationException;
 import org.choresify.domain.member.model.Member;
 import org.choresify.domain.member.model.NewMember;
@@ -26,11 +26,7 @@ class DefaultCreateMemberUseCaseTest {
     var newMember =
         NewMember.builder().nickname("Adam Smith").emailAddress("adam@smith.com").build();
     var expected =
-        Member.builder()
-            .nickname("Adam Smith")
-            .emailAddress("adam@smith.com")
-            .id(1)
-            .build();
+        Member.builder().nickname("Adam Smith").emailAddress("adam@smith.com").id(1).build();
 
     // when
     var result = tested.execute(newMember);
@@ -48,7 +44,7 @@ class DefaultCreateMemberUseCaseTest {
 
     // when
     var result =
-        catchThrowableOfType(() -> tested.execute(newMember), PreconditionFailedException.class);
+        catchThrowableOfType(() -> tested.execute(newMember), ConflictingDataException.class);
 
     // then
     assertThat(result.getMessage()).isEqualTo("Email address already in use");

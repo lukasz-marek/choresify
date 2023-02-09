@@ -11,8 +11,14 @@ public sealed class DomainException extends RuntimeException {
     }
   }
 
-  public static final class PreconditionFailedException extends DomainException {
-    public PreconditionFailedException(String message) {
+  public static final class ConflictingDataException extends DomainException {
+    public ConflictingDataException(String message) {
+      super(message);
+    }
+  }
+
+  public static final class NoSuchEntityException extends DomainException {
+    public NoSuchEntityException(String message) {
       super(message);
     }
   }

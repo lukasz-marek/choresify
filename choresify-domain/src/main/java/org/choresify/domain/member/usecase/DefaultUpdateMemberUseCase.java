@@ -4,7 +4,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.choresify.domain.common.validation.Validator;
-import org.choresify.domain.exception.DomainException.PreconditionFailedException;
+import org.choresify.domain.exception.DomainException.NoSuchEntityException;
 import org.choresify.domain.member.model.Member;
 import org.choresify.domain.member.port.Members;
 
@@ -21,7 +21,7 @@ public final class DefaultUpdateMemberUseCase implements UpdateMemberUseCase {
     memberValidator.validate(newValue);
     if (!memberExists(newValue.getId())) {
       log.info("Rejecting update of [{}] - no such member exists", newValue);
-      throw new PreconditionFailedException("Cannot update non-existent member");
+      throw new NoSuchEntityException("Cannot update non-existent member");
     }
     log.info("Member exists, proceeding with update to [{}]", newValue);
     return members.save(newValue);
