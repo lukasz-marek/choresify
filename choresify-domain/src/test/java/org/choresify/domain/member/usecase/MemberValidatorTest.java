@@ -11,17 +11,6 @@ class MemberValidatorTest {
   private final MemberValidator tested = new MemberValidator();
 
   @Test
-  void throwsExceptionWhenMemberIsNull() {
-    // when
-    var result =
-        catchThrowableOfType(
-            () -> tested.validate(null), DomainException.ValidationException.class);
-
-    // then
-    assertThat(result).hasMessage("Member must not be null");
-  }
-
-  @Test
   void throwsExceptionWhenNicknameIsNull() {
     // given
     var member = Member.builder().nickname(null).emailAddress("email@example.com").build();

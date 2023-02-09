@@ -10,17 +10,8 @@ public final class MemberValidator implements Validator<Member> {
   @Override
   public void validate(Member member) {
     log.info("Validating [{}]", member);
-    validateNotNull(member);
     validateNicknameNotNull(member);
     validateEmailAddressNotNull(member);
-  }
-
-  private void validateNotNull(Member member) {
-    if (member == null) {
-      log.warn("Member must not be null");
-      throw new ValidationException("Member must not be null");
-    }
-    log.info("[{}] - not-null validation successful", member);
   }
 
   private void validateNicknameNotNull(Member member) {
