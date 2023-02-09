@@ -1,6 +1,7 @@
 package org.choresify.domain.member.usecase;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.choresify.domain.common.validation.Validator;
@@ -17,7 +18,7 @@ public final class DefaultUpdateMemberUseCase implements UpdateMemberUseCase {
   private final Validator<Member> memberValidator;
 
   @Override
-  public Member execute(Member newValue) {
+  public Member execute(@NonNull Member newValue) {
     memberValidator.validate(newValue);
     if (!memberExists(newValue.getId())) {
       log.info("Rejecting update of [{}] - no such member exists", newValue);

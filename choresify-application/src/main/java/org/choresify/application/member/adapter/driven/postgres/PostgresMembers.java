@@ -1,6 +1,7 @@
 package org.choresify.application.member.adapter.driven.postgres;
 
 import java.util.Optional;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.choresify.domain.member.model.Member;
@@ -19,7 +20,7 @@ class PostgresMembers implements Members {
   private final MemberEntityMapper memberEntityMapper;
 
   @Override
-  public Member insert(NewMember newMember) {
+  public Member insert(@NonNull NewMember newMember) {
     var newEntity = memberEntityMapper.map(newMember);
     log.info("Inserting [{}] into database", newEntity);
     var created = membersRepository.save(newEntity);
@@ -28,7 +29,7 @@ class PostgresMembers implements Members {
   }
 
   @Override
-  public Member save(Member member) {
+  public Member save(@NonNull Member member) {
     var forUpdate = memberEntityMapper.map(member);
     log.info("Saving [{}] into database", forUpdate);
     var created = membersRepository.save(forUpdate);
@@ -42,7 +43,7 @@ class PostgresMembers implements Members {
   }
 
   @Override
-  public Optional<Member> findByEmail(String email) {
+  public Optional<Member> findByEmail(@NonNull String email) {
     return membersRepository.findByEmailAddress(email).map(memberEntityMapper::map);
   }
 }

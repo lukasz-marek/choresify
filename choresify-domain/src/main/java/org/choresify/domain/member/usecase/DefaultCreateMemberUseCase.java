@@ -1,6 +1,7 @@
 package org.choresify.domain.member.usecase;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.choresify.domain.common.validation.Validator;
@@ -18,7 +19,7 @@ public final class DefaultCreateMemberUseCase implements CreateMemberUseCase {
   private final Validator<NewMember> newMemberValidator;
 
   @Override
-  public Member execute(NewMember newMember) {
+  public Member execute(@NonNull NewMember newMember) {
     newMemberValidator.validate(newMember);
     if (isEmailInUse(newMember.getEmailAddress())) {
       log.info(

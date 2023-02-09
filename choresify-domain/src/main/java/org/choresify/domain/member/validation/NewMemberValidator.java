@@ -1,6 +1,6 @@
 package org.choresify.domain.member.validation;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.choresify.domain.common.validation.Validator;
 import org.choresify.domain.exception.DomainException.ValidationException;
