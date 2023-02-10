@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
 import org.choresify.domain.exception.DomainException;
 import org.choresify.domain.member.model.NewMember;
-import org.choresify.domain.member.validation.NewMemberValidator;
 import org.junit.jupiter.api.Test;
 
 class NewMemberValidatorTest {

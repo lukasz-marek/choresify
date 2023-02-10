@@ -9,9 +9,9 @@ import org.choresify.domain.member.usecase.DefaultCreateMemberUseCase;
 import org.choresify.domain.member.usecase.DefaultGetMemberByIdUseCase;
 import org.choresify.domain.member.usecase.DefaultUpdateMemberUseCase;
 import org.choresify.domain.member.usecase.GetMemberByIdUseCase;
+import org.choresify.domain.member.usecase.UpdateMemberUseCase;
 import org.choresify.domain.member.validation.MemberValidator;
 import org.choresify.domain.member.validation.NewMemberValidator;
-import org.choresify.domain.member.usecase.UpdateMemberUseCase;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
