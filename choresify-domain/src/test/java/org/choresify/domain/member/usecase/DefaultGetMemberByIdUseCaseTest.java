@@ -19,7 +19,7 @@ class DefaultGetMemberByIdUseCaseTest {
             NewMember.builder().emailAddress("email@example.com").nickname("a nickname").build());
 
     // when
-    var result = tested.execute(existingMember.getId());
+    var result = tested.execute(existingMember.id());
 
     // then
     assertThat(result).contains(existingMember);

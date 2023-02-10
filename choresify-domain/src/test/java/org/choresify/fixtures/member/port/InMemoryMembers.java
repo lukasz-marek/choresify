@@ -19,7 +19,7 @@ public final class InMemoryMembers implements Members {
             .emailAddress(newMember.emailAddress())
             .id(nextId++)
             .build();
-    storage.put(member.getId(), member);
+    storage.put(member.id(), member);
     return member;
   }
 
@@ -27,11 +27,11 @@ public final class InMemoryMembers implements Members {
   public Member save(Member member) {
     var newRevision =
         Member.builder()
-            .id(member.getId())
-            .nickname(member.getNickname())
-            .emailAddress(member.getEmailAddress())
+            .id(member.id())
+            .nickname(member.nickname())
+            .emailAddress(member.emailAddress())
             .build();
-    storage.put(newRevision.getId(), newRevision);
+    storage.put(newRevision.id(), newRevision);
     return newRevision;
   }
 
@@ -43,7 +43,7 @@ public final class InMemoryMembers implements Members {
   @Override
   public Optional<Member> findByEmail(String email) {
     return storage.values().stream()
-        .filter(member -> member.getEmailAddress().equals(email))
+        .filter(member -> member.emailAddress().equals(email))
         .findAny();
   }
 }

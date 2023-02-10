@@ -1,12 +1,7 @@
 package org.choresify.domain.member.model;
 
 import lombok.Builder;
-import lombok.Value;
 
-@Value
 @Builder
-public class Member {
-  long id;
-  String nickname;
-  String emailAddress;
+public record Member(long id, String nickname, String emailAddress) {
 }

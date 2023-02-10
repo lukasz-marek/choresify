@@ -32,9 +32,9 @@ class PostgresMembersTest {
       var afterSave = tested.insert(newMember);
 
       // then
-      assertThat(afterSave.getId()).isPositive();
-      assertThat(afterSave.getNickname()).isEqualTo("a nickname");
-      assertThat(afterSave.getEmailAddress()).isEqualTo("email@example.com");
+      assertThat(afterSave.id()).isPositive();
+      assertThat(afterSave.nickname()).isEqualTo("a nickname");
+      assertThat(afterSave.emailAddress()).isEqualTo("email@example.com");
     }
 
     @Test
@@ -45,7 +45,7 @@ class PostgresMembersTest {
 
       // when
       var afterSave = tested.insert(newMember);
-      var read = tested.findById(afterSave.getId());
+      var read = tested.findById(afterSave.id());
 
       // then
       assertThat(read).contains(afterSave);
@@ -89,7 +89,7 @@ class PostgresMembersTest {
       var existingMember = tested.insert(newMember);
 
       // when
-      var result = tested.findById(existingMember.getId());
+      var result = tested.findById(existingMember.id());
 
       // then
       assertThat(result).isNotEmpty();
@@ -118,9 +118,9 @@ class PostgresMembersTest {
       var afterSave = tested.save(newMember);
 
       // then
-      assertThat(afterSave.getId()).isPositive();
-      assertThat(afterSave.getNickname()).isEqualTo("a nickname");
-      assertThat(afterSave.getEmailAddress()).isEqualTo("email@example.com");
+      assertThat(afterSave.id()).isPositive();
+      assertThat(afterSave.nickname()).isEqualTo("a nickname");
+      assertThat(afterSave.emailAddress()).isEqualTo("email@example.com");
     }
 
     @Test
@@ -131,7 +131,7 @@ class PostgresMembersTest {
 
       // when
       var afterSave = tested.save(newMember);
-      var read = tested.findById(afterSave.getId());
+      var read = tested.findById(afterSave.id());
 
       // then
       assertThat(read).contains(afterSave);
@@ -145,7 +145,7 @@ class PostgresMembersTest {
               NewMember.builder().emailAddress("email@example.com").nickname("a nickname").build());
       var override =
           Member.builder()
-              .id(existing.getId())
+              .id(existing.id())
               .emailAddress("different@example.com")
               .nickname("a different nickname")
               .build();
@@ -154,9 +154,9 @@ class PostgresMembersTest {
       var afterSave = tested.save(override);
 
       // then
-      assertThat(afterSave.getId()).isEqualTo(existing.getId());
-      assertThat(afterSave.getNickname()).isEqualTo("a different nickname");
-      assertThat(afterSave.getEmailAddress()).isEqualTo("different@example.com");
+      assertThat(afterSave.id()).isEqualTo(existing.id());
+      assertThat(afterSave.nickname()).isEqualTo("a different nickname");
+      assertThat(afterSave.emailAddress()).isEqualTo("different@example.com");
     }
 
     @Test
@@ -167,14 +167,14 @@ class PostgresMembersTest {
               NewMember.builder().emailAddress("email@example.com").nickname("a nickname").build());
       var override =
           Member.builder()
-              .id(existing.getId())
+              .id(existing.id())
               .emailAddress("different@example.com")
               .nickname("a different nickname")
               .build();
 
       // when
       var afterSave = tested.save(override);
-      var read = tested.findById(afterSave.getId());
+      var read = tested.findById(afterSave.id());
 
       // then
       assertThat(read).contains(afterSave);

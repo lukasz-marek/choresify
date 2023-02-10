@@ -20,7 +20,7 @@ public final class DefaultUpdateMemberUseCase implements UpdateMemberUseCase {
   @Override
   public Member execute(@NonNull Member newValue) {
     memberValidator.validate(newValue);
-    if (!memberExists(newValue.getId())) {
+    if (!memberExists(newValue.id())) {
       log.info("Rejecting update of [{}] - no such member exists", newValue);
       throw new NoSuchEntityException("Cannot update non-existent member");
     }

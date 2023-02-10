@@ -28,7 +28,7 @@ class DefaultUpdateMemberUseCaseTest {
 
     var forUpdate =
         Member.builder()
-            .id(existingMember.getId())
+            .id(existingMember.id())
             .nickname("a different nickname")
             .emailAddress("different@example.com")
             .build();

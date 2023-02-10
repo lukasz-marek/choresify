@@ -63,9 +63,9 @@ class MemberEntityMapperTest {
 
       // then
       assertThat(member).isNotNull();
-      assertThat(member.getId()).isEqualTo(37);
-      assertThat(member.getNickname()).isEqualTo("a nickname");
-      assertThat(member.getEmailAddress()).isEqualTo("email@example.com");
+      assertThat(member.id()).isEqualTo(37);
+      assertThat(member.nickname()).isEqualTo("a nickname");
+      assertThat(member.emailAddress()).isEqualTo("email@example.com");
     }
 
     @Test
@@ -78,9 +78,9 @@ class MemberEntityMapperTest {
 
       // then
       assertThat(member).isNotNull();
-      assertThat(member.getId()).isEqualTo(0);
-      assertThat(member.getNickname()).isEqualTo(null);
-      assertThat(member.getEmailAddress()).isEqualTo(null);
+      assertThat(member.id()).isEqualTo(0);
+      assertThat(member.nickname()).isEqualTo(null);
+      assertThat(member.emailAddress()).isEqualTo(null);
     }
   }
 

@@ -119,15 +119,15 @@ class MemberApiTest {
       // when
       var response =
           testRestTemplate.getForEntity(
-              MEMBER_ENDPOINT + "/" + existingMember.getId(), MemberDto.class);
+              MEMBER_ENDPOINT + "/" + existingMember.id(), MemberDto.class);
 
       // then
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
       var memberFromApi = response.getBody();
       assertThat(memberFromApi).isNotNull();
-      assertThat(memberFromApi.getNickname()).isEqualTo(existingMember.getNickname());
-      assertThat(memberFromApi.getEmailAddress()).isEqualTo(existingMember.getEmailAddress());
-      assertThat(memberFromApi.getId()).isEqualTo(existingMember.getId());
+      assertThat(memberFromApi.getNickname()).isEqualTo(existingMember.nickname());
+      assertThat(memberFromApi.getEmailAddress()).isEqualTo(existingMember.emailAddress());
+      assertThat(memberFromApi.getId()).isEqualTo(existingMember.id());
     }
 
     @Test
@@ -167,13 +167,13 @@ class MemberApiTest {
           MemberDto.builder()
               .nickname("John")
               .emailAddress("john@mccarthy.com")
-              .id(existingMember.getId())
+              .id(existingMember.id())
               .build();
 
       // when
       var updated =
           testRestTemplate.exchange(
-              RequestEntity.put(MEMBER_ENDPOINT + "/{memberId}", existingMember.getId())
+              RequestEntity.put(MEMBER_ENDPOINT + "/{memberId}", existingMember.id())
                   .body(updateInput),
               MemberDto.class);
 
