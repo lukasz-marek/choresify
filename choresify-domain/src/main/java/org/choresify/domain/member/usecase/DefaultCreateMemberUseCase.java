@@ -21,10 +21,10 @@ public final class DefaultCreateMemberUseCase implements CreateMemberUseCase {
   @Override
   public Member execute(@NonNull NewMember newMember) {
     newMemberValidator.validate(newMember);
-    if (isEmailInUse(newMember.getEmailAddress())) {
+    if (isEmailInUse(newMember.emailAddress())) {
       log.info(
           "Member email [{}] already exists, insertion of [{}] canceled",
-          newMember.getEmailAddress(),
+          newMember.emailAddress(),
           newMember);
       throw new ConflictingDataException("Email address already in use");
     }

@@ -15,8 +15,8 @@ public final class InMemoryMembers implements Members {
   public Member insert(NewMember newMember) {
     var member =
         Member.builder()
-            .nickname(newMember.getNickname())
-            .emailAddress(newMember.getEmailAddress())
+            .nickname(newMember.nickname())
+            .emailAddress(newMember.emailAddress())
             .id(nextId++)
             .build();
     storage.put(member.getId(), member);

@@ -57,8 +57,8 @@ class MemberDtoMapperTest {
       var newMember = tested.map(newMemberDto);
 
       // then
-      assertThat(newMember.getEmailAddress()).isEqualTo("wanda@maximoff.com");
-      assertThat(newMember.getNickname()).isEqualTo("Wanda Maximoff");
+      assertThat(newMember.emailAddress()).isEqualTo("wanda@maximoff.com");
+      assertThat(newMember.nickname()).isEqualTo("Wanda Maximoff");
     }
 
     @Test
@@ -70,8 +70,8 @@ class MemberDtoMapperTest {
       var newMember = tested.map(newMemberDto);
 
       // then
-      assertThat(newMember.getEmailAddress()).isNull();
-      assertThat(newMember.getNickname()).isNull();
+      assertThat(newMember.emailAddress()).isNull();
+      assertThat(newMember.nickname()).isNull();
     }
   }
 

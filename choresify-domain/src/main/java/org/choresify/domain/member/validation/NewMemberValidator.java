@@ -16,7 +16,7 @@ public final class NewMemberValidator implements Validator<NewMember> {
   }
 
   private void validateNicknameNotNull(NewMember newMember) {
-    if (newMember.getNickname() == null) {
+    if (newMember.nickname() == null) {
       log.warn("[{}] - nickname must not be null", newMember);
       throw new ValidationException("nickname must not be null");
     }
@@ -24,7 +24,7 @@ public final class NewMemberValidator implements Validator<NewMember> {
   }
 
   private void validateEmailAddressNotNull(NewMember newMember) {
-    if (newMember.getEmailAddress() == null) {
+    if (newMember.emailAddress() == null) {
       log.warn("[{}] - email address must not be null", newMember);
       throw new ValidationException("email address must not be null");
     }
