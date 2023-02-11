@@ -4,7 +4,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.choresify.domain.exception.DomainException.NoSuchEntityException;
+import org.choresify.domain.exception.NoSuchEntityException;
 import org.choresify.domain.member.model.Member;
 import org.choresify.domain.member.port.Members;
 

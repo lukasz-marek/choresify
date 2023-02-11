@@ -3,7 +3,7 @@ package org.choresify.domain.member.usecase;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
-import org.choresify.domain.exception.DomainException.ConflictingDataException;
+import org.choresify.domain.exception.ConflictingDataException;
 import org.choresify.domain.member.model.Member;
 import org.choresify.domain.member.model.NewMember;
 import org.choresify.domain.member.port.Members;
