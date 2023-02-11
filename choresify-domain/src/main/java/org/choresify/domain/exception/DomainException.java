@@ -5,12 +5,6 @@ public sealed class DomainException extends RuntimeException {
     super(message);
   }
 
-  public static final class ValidationException extends DomainException {
-    public ValidationException(String message) {
-      super(message);
-    }
-  }
-
   public static final class ConflictingDataException extends DomainException {
     public ConflictingDataException(String message) {
       super(message);

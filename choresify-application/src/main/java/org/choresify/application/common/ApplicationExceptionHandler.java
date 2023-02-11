@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.choresify.domain.exception.DomainException.ConflictingDataException;
 import org.choresify.domain.exception.DomainException.NoSuchEntityException;
-import org.choresify.domain.exception.DomainException.ValidationException;
 import org.choresify.domain.exception.InvariantViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.ErrorResponse;
@@ -28,7 +27,7 @@ class ApplicationExceptionHandler extends ResponseEntityExceptionHandler {
         .build();
   }
 
-  @ExceptionHandler({ValidationException.class, InvariantViolationException.class})
+  @ExceptionHandler(InvariantViolationException.class)
   ErrorResponse handle(Exception exception) {
     log.info("Handling exception", exception);
     return ErrorResponse.builder(exception, HttpStatus.BAD_REQUEST, exception.getMessage())

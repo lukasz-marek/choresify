@@ -52,21 +52,6 @@ class MemberEntityMapperTest {
       assertThat(member.nickname()).isEqualTo("a nickname");
       assertThat(member.emailAddress()).isEqualTo("email@example.com");
     }
-
-    @Test
-    void nullsAreMappedToNulls() {
-      // given
-      var entity = MemberEntity.builder().emailAddress(null).nickname(null).id(null).build();
-
-      // when
-      var member = tested.map(entity);
-
-      // then
-      assertThat(member).isNotNull();
-      assertThat(member.id()).isEqualTo(0);
-      assertThat(member.nickname()).isEqualTo(null);
-      assertThat(member.emailAddress()).isEqualTo(null);
-    }
   }
 
   @Nested
@@ -85,21 +70,6 @@ class MemberEntityMapperTest {
       assertThat(entity.getId()).isEqualTo(37);
       assertThat(entity.getNickname()).isEqualTo("a nickname");
       assertThat(entity.getEmailAddress()).isEqualTo("email@example.com");
-    }
-
-    @Test
-    void nullsAreMappedToNulls() {
-      // given
-      var member = Member.builder().emailAddress(null).nickname(null).build();
-
-      // when
-      var entity = tested.map(member);
-
-      // then
-      assertThat(entity).isNotNull();
-      assertThat(entity.getId()).isEqualTo(0);
-      assertThat(entity.getNickname()).isEqualTo(null);
-      assertThat(entity.getEmailAddress()).isEqualTo(null);
     }
   }
 }

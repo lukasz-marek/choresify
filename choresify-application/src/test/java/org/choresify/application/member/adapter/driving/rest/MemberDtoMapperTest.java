@@ -26,20 +26,6 @@ class MemberDtoMapperTest {
       assertThat(memberDto.getEmailAddress()).isEqualTo("john@snow.com");
       assertThat(memberDto.getNickname()).isEqualTo("John Snow");
     }
-
-    @Test
-    void nullsAreMappedToNulls() {
-      // given
-      var member = Member.builder().build();
-
-      // when
-      var memberDto = tested.map(member);
-
-      // then
-      assertThat(memberDto.getId()).isEqualTo(0);
-      assertThat(memberDto.getEmailAddress()).isNull();
-      assertThat(memberDto.getNickname()).isNull();
-    }
   }
 
   @Nested
@@ -77,20 +63,6 @@ class MemberDtoMapperTest {
       assertThat(member.id()).isEqualTo(21);
       assertThat(member.emailAddress()).isEqualTo("john@snow.com");
       assertThat(member.nickname()).isEqualTo("John Snow");
-    }
-
-    @Test
-    void nullsAreMappedToNulls() {
-      // given
-      var memberDto = MemberDto.builder().build();
-
-      // when
-      var member = tested.map(memberDto);
-
-      // then
-      assertThat(member.id()).isEqualTo(0);
-      assertThat(member.emailAddress()).isNull();
-      assertThat(member.nickname()).isNull();
     }
   }
 }
