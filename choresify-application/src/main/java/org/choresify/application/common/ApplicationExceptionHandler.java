@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.choresify.domain.exception.DomainException.ConflictingDataException;
 import org.choresify.domain.exception.DomainException.NoSuchEntityException;
 import org.choresify.domain.exception.DomainException.ValidationException;
+import org.choresify.domain.exception.InvariantViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,8 +28,8 @@ class ApplicationExceptionHandler extends ResponseEntityExceptionHandler {
         .build();
   }
 
-  @ExceptionHandler(ValidationException.class)
-  ErrorResponse handle(ValidationException exception) {
+  @ExceptionHandler({ValidationException.class, InvariantViolationException.class})
+  ErrorResponse handle(Exception exception) {
     log.info("Handling exception", exception);
     return ErrorResponse.builder(exception, HttpStatus.BAD_REQUEST, exception.getMessage())
         .title("Something went wrong")

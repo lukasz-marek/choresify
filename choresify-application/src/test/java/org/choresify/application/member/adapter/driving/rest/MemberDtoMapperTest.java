@@ -60,19 +60,6 @@ class MemberDtoMapperTest {
       assertThat(newMember.emailAddress()).isEqualTo("wanda@maximoff.com");
       assertThat(newMember.nickname()).isEqualTo("Wanda Maximoff");
     }
-
-    @Test
-    void nullsAreMappedToNulls() {
-      // given
-      var newMemberDto = NewMemberDto.builder().emailAddress(null).nickname(null).build();
-
-      // when
-      var newMember = tested.map(newMemberDto);
-
-      // then
-      assertThat(newMember.emailAddress()).isNull();
-      assertThat(newMember.nickname()).isNull();
-    }
   }
 
   @Nested

@@ -41,7 +41,7 @@ class MemberApiTest {
               List.of("nickname")),
           Arguments.of(
               NewMemberDto.builder().nickname("doctor strange").emailAddress(null).build(),
-              List.of("email address")));
+              List.of("emailAddress")));
     }
 
     @Test

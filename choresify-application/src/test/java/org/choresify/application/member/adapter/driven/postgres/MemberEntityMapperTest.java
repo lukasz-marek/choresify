@@ -29,21 +29,6 @@ class MemberEntityMapperTest {
       assertThat(entity.getNickname()).isEqualTo("a nickname");
       assertThat(entity.getEmailAddress()).isEqualTo("email@example.com");
     }
-
-    @Test
-    void nullsAreMappedToNulls() {
-      // given
-      var newMember = NewMember.builder().emailAddress(null).nickname(null).build();
-
-      // when
-      var entity = tested.map(newMember);
-
-      // then
-      assertThat(entity).isNotNull();
-      assertThat(entity.getId()).isNull();
-      assertThat(entity.getNickname()).isNull();
-      assertThat(entity.getEmailAddress()).isNull();
-    }
   }
 
   @Nested

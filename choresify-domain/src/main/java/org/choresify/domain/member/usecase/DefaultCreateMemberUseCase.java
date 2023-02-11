@@ -4,7 +4,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.choresify.domain.common.validation.Validator;
 import org.choresify.domain.exception.DomainException.ConflictingDataException;
 import org.choresify.domain.member.model.Member;
 import org.choresify.domain.member.model.NewMember;
@@ -16,11 +15,8 @@ public final class DefaultCreateMemberUseCase implements CreateMemberUseCase {
   @SuppressFBWarnings("EI_EXPOSE_REP2")
   private final Members members;
 
-  private final Validator<NewMember> newMemberValidator;
-
   @Override
   public Member execute(@NonNull NewMember newMember) {
-    newMemberValidator.validate(newMember);
     if (isEmailInUse(newMember.emailAddress())) {
       log.info(
           "Member email [{}] already exists, insertion of [{}] canceled",
