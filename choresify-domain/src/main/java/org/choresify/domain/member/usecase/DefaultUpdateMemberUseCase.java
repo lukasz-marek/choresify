@@ -1,9 +1,9 @@
 package org.choresify.domain.member.usecase;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.choresify.domain.exception.Invariants;
 import org.choresify.domain.exception.NoSuchEntityException;
 import org.choresify.domain.member.model.Member;
 import org.choresify.domain.member.port.Members;
@@ -15,13 +15,14 @@ public final class DefaultUpdateMemberUseCase implements UpdateMemberUseCase {
   private final Members members;
 
   @Override
-  public Member execute(@NonNull Member newValue) {
-    if (!memberExists(newValue.id())) {
-      log.info("Rejecting update of [{}] - no such member exists", newValue);
+  public Member execute(Member member) {
+    Invariants.requireNonNull(member, "member");
+    if (!memberExists(member.id())) {
+      log.info("Rejecting update of [{}] - no such member exists", member);
       throw new NoSuchEntityException("Cannot update non-existent member");
     }
-    log.info("Member exists, proceeding with update to [{}]", newValue);
-    return members.save(newValue);
+    log.info("Member exists, proceeding with update to [{}]", member);
+    return members.save(member);
   }
 
   private boolean memberExists(long memberId) {

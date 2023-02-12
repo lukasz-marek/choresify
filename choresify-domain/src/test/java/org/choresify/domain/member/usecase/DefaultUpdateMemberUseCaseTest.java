@@ -3,6 +3,7 @@ package org.choresify.domain.member.usecase;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
+import org.choresify.domain.exception.InvariantViolationException;
 import org.choresify.domain.exception.NoSuchEntityException;
 import org.choresify.domain.member.model.Member;
 import org.choresify.domain.member.model.NewMember;
@@ -51,5 +52,15 @@ class DefaultUpdateMemberUseCaseTest {
 
     // then
     assertThat(result).hasMessageContaining("Cannot update non-existent member");
+  }
+
+  @Test
+  void throwsWhenMemberIsNull() {
+    // when
+    var result =
+        catchThrowableOfType(() -> tested.execute(null), InvariantViolationException.class);
+
+    // then
+    assertThat(result.getMessage()).isEqualTo("member must not be null");
   }
 }

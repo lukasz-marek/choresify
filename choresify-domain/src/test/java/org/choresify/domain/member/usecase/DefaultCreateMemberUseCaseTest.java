@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
 import org.choresify.domain.exception.ConflictingDataException;
+import org.choresify.domain.exception.InvariantViolationException;
 import org.choresify.domain.member.model.Member;
 import org.choresify.domain.member.model.NewMember;
 import org.choresify.domain.member.port.Members;
@@ -43,5 +44,15 @@ class DefaultCreateMemberUseCaseTest {
 
     // then
     assertThat(result.getMessage()).isEqualTo("Email address already in use");
+  }
+
+  @Test
+  void throwsWhenNewMemberIsNull() {
+    // when
+    var result =
+        catchThrowableOfType(() -> tested.execute(null), InvariantViolationException.class);
+
+    // then
+    assertThat(result.getMessage()).isEqualTo("newMember must not be null");
   }
 }

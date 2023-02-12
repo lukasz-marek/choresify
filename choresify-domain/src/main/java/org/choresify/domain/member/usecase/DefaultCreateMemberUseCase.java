@@ -1,10 +1,10 @@
 package org.choresify.domain.member.usecase;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.choresify.domain.exception.ConflictingDataException;
+import org.choresify.domain.exception.Invariants;
 import org.choresify.domain.member.model.Member;
 import org.choresify.domain.member.model.NewMember;
 import org.choresify.domain.member.port.Members;
@@ -16,7 +16,8 @@ public final class DefaultCreateMemberUseCase implements CreateMemberUseCase {
   private final Members members;
 
   @Override
-  public Member execute(@NonNull NewMember newMember) {
+  public Member execute(NewMember newMember) {
+    Invariants.requireNonNull(newMember, "newMember");
     if (isEmailInUse(newMember.emailAddress())) {
       log.info(
           "Member email [{}] already exists, insertion of [{}] canceled",
