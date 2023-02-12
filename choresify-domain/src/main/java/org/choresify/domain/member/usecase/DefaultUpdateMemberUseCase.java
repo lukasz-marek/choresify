@@ -16,6 +16,7 @@ public final class DefaultUpdateMemberUseCase implements UpdateMemberUseCase {
 
   @Override
   public Member execute(Member member) {
+    // todo check if email in use
     Invariants.requireNonNull(member, "member");
     if (!memberExists(member.id())) {
       log.info("Rejecting update of [{}] - no such member exists", member);
