@@ -1,12 +1,12 @@
 package org.choresify.domain.member.model;
 
 import lombok.Builder;
-import org.choresify.domain.exception.Invariant;
+import org.choresify.domain.exception.Invariants;
 
 @Builder
 public record Member(long id, String nickname, String emailAddress) {
   public Member {
-    Invariant.assertTrue(nickname != null, "nickname must not be null");
-    Invariant.assertTrue(emailAddress != null, "emailAddress must not be null");
+    Invariants.requireNonNull(nickname, "nickname");
+    Invariants.requireNonNull(emailAddress, "emailAddress");
   }
 }

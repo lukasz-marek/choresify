@@ -3,18 +3,17 @@ package org.choresify.domain.exception;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class RequirementTest {
+class InvariantsTest {
 
   @Test
-  void throwsWhenInvariantIsFalse() {
+  void throwsWhenNull() {
     // when
     var throwable =
         Assertions.catchThrowableOfType(
-            () -> Invariant.assertTrue(false, "failure message"),
-            InvariantViolationException.class);
+            () -> Invariants.requireNonNull(null, "fieldName"), InvariantViolationException.class);
 
     // then
-    Assertions.assertThat(throwable).hasMessageContaining("failure message");
+    Assertions.assertThat(throwable).hasMessageContaining("fieldName must not be null");
   }
 
   @Test
@@ -22,7 +21,8 @@ class RequirementTest {
     // when
     var throwable =
         Assertions.catchThrowableOfType(
-            () -> Invariant.assertTrue(true, "failure message"), InvariantViolationException.class);
+            () -> Invariants.requireNonNull(new Object(), "fieldName"),
+            InvariantViolationException.class);
 
     // then
     Assertions.assertThat(throwable).isNull();
