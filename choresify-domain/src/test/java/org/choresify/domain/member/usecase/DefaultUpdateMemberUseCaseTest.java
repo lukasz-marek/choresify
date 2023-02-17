@@ -3,6 +3,7 @@ package org.choresify.domain.member.usecase;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
+import org.choresify.domain.exception.ConflictingDataException;
 import org.choresify.domain.exception.InvariantViolationException;
 import org.choresify.domain.exception.NoSuchEntityException;
 import org.choresify.domain.member.model.Member;
@@ -52,6 +53,51 @@ class DefaultUpdateMemberUseCaseTest {
 
     // then
     assertThat(result).hasMessageContaining("Cannot update non-existent member");
+  }
+
+  @Test
+  void updateIsRejectedWhenEmailIsChangedToEmailInUseByDifferentMember() {
+    // given
+    var existingMember =
+        members.insert(
+            NewMember.builder().emailAddress("email@example.com").nickname("a nickname").build());
+    members.insert(
+        NewMember.builder().emailAddress("different@example.com").nickname("a nickname").build());
+
+    var forUpdate =
+        Member.builder()
+            .id(existingMember.id())
+            .nickname("a different nickname")
+            .emailAddress("different@example.com")
+            .build();
+
+    // when
+    var result =
+        catchThrowableOfType(() -> tested.execute(forUpdate), ConflictingDataException.class);
+
+    // then
+    assertThat(result).hasMessageContaining("Email address already in use by a different member");
+  }
+
+  @Test
+  void updateIsSuccessfulWhenEmailIsChangedToEmailNotInUse() {
+    // given
+    var existingMember =
+        members.insert(
+            NewMember.builder().emailAddress("email@example.com").nickname("a nickname").build());
+
+    var forUpdate =
+        Member.builder()
+            .id(existingMember.id())
+            .nickname("a different nickname")
+            .emailAddress("different@example.com")
+            .build();
+
+    // when
+    var result = tested.execute(forUpdate);
+
+    // then
+    assertThat(result).isEqualTo(forUpdate);
   }
 
   @Test

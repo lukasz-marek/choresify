@@ -3,6 +3,7 @@ package org.choresify.domain.member.usecase;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.choresify.domain.exception.ConflictingDataException;
 import org.choresify.domain.exception.Invariants;
 import org.choresify.domain.exception.NoSuchEntityException;
 import org.choresify.domain.member.model.Member;
@@ -16,14 +17,29 @@ public final class DefaultUpdateMemberUseCase implements UpdateMemberUseCase {
 
   @Override
   public Member execute(Member member) {
-    // todo check if email in use
     Invariants.requireNonNull(member, "member");
+    checkPreconditions(member);
+    log.info("Checks complete, proceeding with update to [{}]", member);
+    return members.save(member);
+  }
+
+  private void checkPreconditions(Member member) {
     if (!memberExists(member.id())) {
       log.info("Rejecting update of [{}] - no such member exists", member);
       throw new NoSuchEntityException("Cannot update non-existent member");
     }
-    log.info("Member exists, proceeding with update to [{}]", member);
-    return members.save(member);
+    if (emailInUseByDifferentMember(member)) {
+      log.info(
+          "Rejecting update of [{}] - email address already in use by a different member", member);
+      throw new ConflictingDataException("Email address already in use by a different member");
+    }
+  }
+
+  private boolean emailInUseByDifferentMember(Member member) {
+    return members
+        .findByEmail(member.emailAddress())
+        .map(existingMember -> existingMember.id() != member.id())
+        .orElse(false);
   }
 
   private boolean memberExists(long memberId) {
