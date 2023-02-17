@@ -25,6 +25,7 @@ class MemberEntityMapperTest {
 
       // then
       assertThat(entity).isNotNull();
+      assertThat(entity.getVersion()).isEqualTo(0);
       assertThat(entity.getId()).isNull();
       assertThat(entity.getNickname()).isEqualTo("a nickname");
       assertThat(entity.getEmailAddress()).isEqualTo("email@example.com");
@@ -41,6 +42,7 @@ class MemberEntityMapperTest {
               .emailAddress("email@example.com")
               .nickname("a nickname")
               .id(37L)
+              .version(5L)
               .build();
 
       // when
@@ -48,6 +50,7 @@ class MemberEntityMapperTest {
 
       // then
       assertThat(member).isNotNull();
+      assertThat(member.version()).isEqualTo(5);
       assertThat(member.id()).isEqualTo(37);
       assertThat(member.nickname()).isEqualTo("a nickname");
       assertThat(member.emailAddress()).isEqualTo("email@example.com");
@@ -60,13 +63,19 @@ class MemberEntityMapperTest {
     void allFieldsAreMapped() {
       // given
       var member =
-          Member.builder().emailAddress("email@example.com").nickname("a nickname").id(37L).build();
+          Member.builder()
+              .emailAddress("email@example.com")
+              .nickname("a nickname")
+              .id(37L)
+              .version(21)
+              .build();
 
       // when
       var entity = tested.map(member);
 
       // then
       assertThat(entity).isNotNull();
+      assertThat(entity.getVersion()).isEqualTo(21);
       assertThat(entity.getId()).isEqualTo(37);
       assertThat(entity.getNickname()).isEqualTo("a nickname");
       assertThat(entity.getEmailAddress()).isEqualTo("email@example.com");

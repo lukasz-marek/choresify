@@ -32,3 +32,14 @@ databaseChangeLog:
                   name: email_address
             indexName: idx_email_address
             tableName: member
+  - changeSet:
+      id: 170220231551
+      author: lmarek
+      changes:
+        - addColumn:
+            tableName: member
+            columns:
+              name: version
+              type: bigint
+              constraints:
+                nullable: false

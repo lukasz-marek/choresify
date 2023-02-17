@@ -16,13 +16,19 @@ class MemberDtoMapperTest {
     void mapsMemberToMemberDto() {
       // given
       var member =
-          Member.builder().id(21).nickname("John Snow").emailAddress("john@snow.com").build();
+          Member.builder()
+              .id(21)
+              .nickname("John Snow")
+              .emailAddress("john@snow.com")
+              .version(5)
+              .build();
 
       // when
       var memberDto = tested.map(member);
 
       // then
       assertThat(memberDto.getId()).isEqualTo(21);
+      assertThat(member.version()).isEqualTo(5);
       assertThat(memberDto.getEmailAddress()).isEqualTo("john@snow.com");
       assertThat(memberDto.getNickname()).isEqualTo("John Snow");
     }
@@ -54,13 +60,19 @@ class MemberDtoMapperTest {
     void mapsMemberDtoToMember() {
       // given
       var memberDto =
-          MemberDto.builder().id(21).nickname("John Snow").emailAddress("john@snow.com").build();
+          MemberDto.builder()
+              .id(21)
+              .nickname("John Snow")
+              .emailAddress("john@snow.com")
+              .version(2L)
+              .build();
 
       // when
       var member = tested.map(memberDto);
 
       // then
       assertThat(member.id()).isEqualTo(21);
+      assertThat(member.version()).isEqualTo(2);
       assertThat(member.emailAddress()).isEqualTo("john@snow.com");
       assertThat(member.nickname()).isEqualTo("John Snow");
     }

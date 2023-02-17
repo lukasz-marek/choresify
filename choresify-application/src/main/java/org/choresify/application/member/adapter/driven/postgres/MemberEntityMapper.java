@@ -4,6 +4,7 @@ import org.choresify.application.member.adapter.driven.postgres.entity.MemberEnt
 import org.choresify.domain.member.model.Member;
 import org.choresify.domain.member.model.NewMember;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants.ComponentModel;
 import org.mapstruct.ReportingPolicy;
 
@@ -12,6 +13,7 @@ import org.mapstruct.ReportingPolicy;
     unmappedTargetPolicy = ReportingPolicy.WARN,
     componentModel = ComponentModel.SPRING)
 interface MemberEntityMapper {
+  @Mapping(target = "version", constant = "0L")
   MemberEntity map(NewMember newMember);
 
   Member map(MemberEntity member);
