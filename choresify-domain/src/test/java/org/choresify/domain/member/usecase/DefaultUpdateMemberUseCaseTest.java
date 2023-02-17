@@ -17,6 +17,10 @@ class DefaultUpdateMemberUseCaseTest {
 
   private final DefaultUpdateMemberUseCase tested = new DefaultUpdateMemberUseCase(members);
 
+  private static Member incrementVersion(Member forUpdate) {
+    return forUpdate.toBuilder().version(forUpdate.version() + 1).build();
+  }
+
   @Test
   void updateIsSuccessfulWhenMemberExists() {
     // given
@@ -35,7 +39,7 @@ class DefaultUpdateMemberUseCaseTest {
     var result = tested.execute(forUpdate);
 
     // then
-    assertThat(result).isEqualTo(forUpdate);
+    assertThat(result).isEqualTo(incrementVersion(forUpdate));
   }
 
   @Test
@@ -97,7 +101,24 @@ class DefaultUpdateMemberUseCaseTest {
     var result = tested.execute(forUpdate);
 
     // then
-    assertThat(result).isEqualTo(forUpdate);
+    assertThat(result).isEqualTo(incrementVersion(forUpdate));
+  }
+
+  @Test
+  void throwsWhenOptimisticLockingFails() {
+    // given
+    var existingMember =
+        members.insert(
+            NewMember.builder().emailAddress("email@example.com").nickname("a nickname").build());
+
+    var forUpdate = existingMember.toBuilder().version(existingMember.version() - 1).build();
+
+    // when
+    var result =
+        catchThrowableOfType(() -> tested.execute(forUpdate), ConflictingDataException.class);
+
+    // then
+    assertThat(result).hasMessageContaining("Optimistic lock failed");
   }
 
   @Test

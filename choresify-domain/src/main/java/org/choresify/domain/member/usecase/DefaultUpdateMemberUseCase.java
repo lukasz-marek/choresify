@@ -20,7 +20,9 @@ public final class DefaultUpdateMemberUseCase implements UpdateMemberUseCase {
     Invariants.requireNonNull(member, "member");
     checkPreconditions(member);
     log.info("Checks complete, proceeding with update to [{}]", member);
-    return members.save(member);
+    return members
+        .updateWithOptimisticLock(member)
+        .orElseThrow(() -> new ConflictingDataException("Optimistic lock failed"));
   }
 
   private void checkPreconditions(Member member) {
