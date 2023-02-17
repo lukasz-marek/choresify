@@ -9,10 +9,12 @@ import org.mapstruct.MappingConstants.ComponentModel;
 import org.mapstruct.ReportingPolicy;
 
 @Mapper(
-    unmappedSourcePolicy = ReportingPolicy.WARN,
-    unmappedTargetPolicy = ReportingPolicy.WARN,
+    unmappedSourcePolicy = ReportingPolicy.ERROR,
+    unmappedTargetPolicy = ReportingPolicy.ERROR,
     componentModel = ComponentModel.SPRING)
 interface MemberEntityMapper {
+
+  @Mapping(target = "id", expression = "java(null)")
   @Mapping(target = "version", constant = "0L")
   MemberEntity map(NewMember newMember);
 
