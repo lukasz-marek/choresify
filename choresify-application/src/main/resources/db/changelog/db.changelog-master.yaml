@@ -43,3 +43,25 @@ databaseChangeLog:
               type: bigint
               constraints:
                 nullable: false
+  - changeSet:
+      id: 170220232345
+      author: lmarek
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: version
+                  type: bigint
+                  constraints:
+                    nullable: false
+            tableName: household
