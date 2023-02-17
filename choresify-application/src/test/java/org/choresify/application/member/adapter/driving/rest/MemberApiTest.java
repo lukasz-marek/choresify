@@ -60,10 +60,10 @@ class MemberApiTest {
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
       var createdMember = response.getBody();
       assertThat(createdMember).isNotNull();
-      assertThat(createdMember.getNickname()).isEqualTo("Doctor Strange");
-      assertThat(createdMember.getEmailAddress()).isEqualTo("doctor@strange.com");
-      assertThat(createdMember.getId()).isPositive();
-      assertThat(createdMember.getVersion()).isEqualTo(0);
+      assertThat(createdMember.nickname()).isEqualTo("Doctor Strange");
+      assertThat(createdMember.emailAddress()).isEqualTo("doctor@strange.com");
+      assertThat(createdMember.id()).isPositive();
+      assertThat(createdMember.version()).isEqualTo(0);
     }
 
     @Test
@@ -126,9 +126,9 @@ class MemberApiTest {
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
       var memberFromApi = response.getBody();
       assertThat(memberFromApi).isNotNull();
-      assertThat(memberFromApi.getNickname()).isEqualTo(existingMember.nickname());
-      assertThat(memberFromApi.getEmailAddress()).isEqualTo(existingMember.emailAddress());
-      assertThat(memberFromApi.getId()).isEqualTo(existingMember.id());
+      assertThat(memberFromApi.nickname()).isEqualTo(existingMember.nickname());
+      assertThat(memberFromApi.emailAddress()).isEqualTo(existingMember.emailAddress());
+      assertThat(memberFromApi.id()).isEqualTo(existingMember.id());
     }
 
     @Test
@@ -182,10 +182,10 @@ class MemberApiTest {
       assertThat(updated.getStatusCode()).isEqualTo(HttpStatus.OK);
       var memberAfterUpdate = updated.getBody();
       assertThat(memberAfterUpdate).isNotNull();
-      assertThat(memberAfterUpdate.getId()).isEqualTo(updateInput.getId());
-      assertThat(memberAfterUpdate.getNickname()).isEqualTo(updateInput.getNickname());
-      assertThat(memberAfterUpdate.getEmailAddress()).isEqualTo(updateInput.getEmailAddress());
-      assertThat(memberAfterUpdate.getVersion()).isEqualTo(updateInput.getVersion() + 1);
+      assertThat(memberAfterUpdate.id()).isEqualTo(updateInput.id());
+      assertThat(memberAfterUpdate.nickname()).isEqualTo(updateInput.nickname());
+      assertThat(memberAfterUpdate.emailAddress()).isEqualTo(updateInput.emailAddress());
+      assertThat(memberAfterUpdate.version()).isEqualTo(updateInput.version() + 1);
     }
 
     @Test
@@ -251,7 +251,7 @@ class MemberApiTest {
       // when
       var updated =
           testRestTemplate.exchange(
-              RequestEntity.put(MEMBER_ENDPOINT + "/" + incompleteMember.getId())
+              RequestEntity.put(MEMBER_ENDPOINT + "/" + incompleteMember.id())
                   .body(incompleteMember),
               String.class);
 

@@ -34,11 +34,11 @@ final class MemberController {
   private final MemberDtoMapper memberDtoMapper;
 
   private static void checkMemberId(MemberDto memberDto, long memberId) {
-    if (!Objects.equals(memberId, memberDto.getId())) {
+    if (!Objects.equals(memberId, memberDto.id())) {
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST,
           "Ambiguous resource id: found %s in body and %s in uri"
-              .formatted(memberDto.getId(), memberId));
+              .formatted(memberDto.id(), memberId));
     }
   }
 

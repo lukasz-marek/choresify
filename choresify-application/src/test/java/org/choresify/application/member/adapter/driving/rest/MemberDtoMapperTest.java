@@ -27,10 +27,10 @@ class MemberDtoMapperTest {
       var memberDto = tested.map(member);
 
       // then
-      assertThat(memberDto.getId()).isEqualTo(21);
+      assertThat(memberDto.id()).isEqualTo(21);
       assertThat(member.version()).isEqualTo(5);
-      assertThat(memberDto.getEmailAddress()).isEqualTo("john@snow.com");
-      assertThat(memberDto.getNickname()).isEqualTo("John Snow");
+      assertThat(memberDto.emailAddress()).isEqualTo("john@snow.com");
+      assertThat(memberDto.nickname()).isEqualTo("John Snow");
     }
   }
 
