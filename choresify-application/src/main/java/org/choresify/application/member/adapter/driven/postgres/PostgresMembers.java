@@ -4,6 +4,7 @@ import java.util.Optional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.choresify.application.member.adapter.driven.postgres.entity.MemberEntity;
 import org.choresify.domain.member.model.Member;
 import org.choresify.domain.member.model.NewMember;
 import org.choresify.domain.member.port.Members;
@@ -35,6 +36,32 @@ class PostgresMembers implements Members {
     var created = membersRepository.save(forUpdate);
     log.info("Successfully saved [{}] into database", created);
     return memberEntityMapper.map(created);
+  }
+
+  /*
+  Optimistic lock requires at least repeatable reads to work correctly.
+   */
+  @Override
+  public Optional<Member> updateWithOptimisticLock(@NonNull Member member) {
+    if (isOptimisticLockValid(member)) {
+      log.info("Optimistic lock is valid for [{}] - performing update", member);
+      return Optional.of(performUpdate(member)).map(memberEntityMapper::map);
+    }
+    log.info("Optimistic lock is invalid for [{}] - update will not be performed", member);
+    return Optional.empty();
+  }
+
+  private MemberEntity performUpdate(Member member) {
+    var entityForUpdate = memberEntityMapper.map(member);
+    entityForUpdate.setVersion(entityForUpdate.getVersion() + 1);
+    return membersRepository.save(entityForUpdate);
+  }
+
+  private boolean isOptimisticLockValid(Member member) {
+    var existing = membersRepository.findById(member.id());
+    return existing
+        .map(currentRevision -> currentRevision.getVersion() == member.version())
+        .orElse(false);
   }
 
   @Override

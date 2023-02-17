@@ -36,6 +36,17 @@ public final class InMemoryMembers implements Members {
   }
 
   @Override
+  public Optional<Member> updateWithOptimisticLock(Member member) {
+    var existing = storage.get(member.id());
+    if (existing == null || existing.version() != member.version()) {
+      return Optional.empty();
+    }
+    var newRevision = member.toBuilder().version(member.version() + 1).build();
+    storage.put(newRevision.id(), newRevision);
+    return Optional.of(newRevision);
+  }
+
+  @Override
   public Optional<Member> findById(long memberId) {
     return Optional.ofNullable(storage.get(memberId));
   }

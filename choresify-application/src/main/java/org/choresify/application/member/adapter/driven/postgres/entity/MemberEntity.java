@@ -30,5 +30,5 @@ public class MemberEntity {
   @ToString.Include String nickname;
   @ToString.Include String emailAddress;
 
-  @ToString.Include Long version;
+  @ToString.Include long version;
 }

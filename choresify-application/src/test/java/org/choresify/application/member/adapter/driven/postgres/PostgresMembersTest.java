@@ -7,6 +7,8 @@ import org.choresify.domain.member.model.NewMember;
 import org.choresify.fixtures.IntegrationTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -178,6 +180,94 @@ class PostgresMembersTest {
 
       // then
       assertThat(read).contains(afterSave);
+    }
+  }
+
+  @Nested
+  class UpdateWithOptimisticLock {
+
+    @Test
+    void overwritesExistingMemberWhenVersionsMatch() {
+      // given
+      var existingMember =
+          tested.insert(
+              NewMember.builder().nickname("a nickname").emailAddress("email@example.com").build());
+      var forUpdate =
+          Member.builder()
+              .emailAddress(existingMember.emailAddress())
+              .nickname("new nickname")
+              .id(existingMember.id())
+              .version(existingMember.version())
+              .build();
+
+      // when
+      var result = tested.updateWithOptimisticLock(forUpdate);
+
+      // then
+      assertThat(result)
+          .contains(
+              Member.builder()
+                  .id(forUpdate.id())
+                  .emailAddress(forUpdate.emailAddress())
+                  .nickname(forUpdate.nickname())
+                  .version(forUpdate.version() + 1)
+                  .build());
+    }
+
+    @Test
+    void updateIsPersistent() {
+      // given
+      var existingMember =
+          tested.insert(
+              NewMember.builder().nickname("a nickname").emailAddress("email@example.com").build());
+      var forUpdate = existingMember.toBuilder().emailAddress("different@example.com").build();
+
+      // when
+      tested.updateWithOptimisticLock(forUpdate);
+      var result = tested.findById(forUpdate.id());
+
+      // then
+      assertThat(result).contains(forUpdate.toBuilder().version(forUpdate.version() + 1).build());
+    }
+
+    @Test
+    void failsToUpdateWhenMemberDoesNotExist() {
+      // given
+      var forUpdate =
+          Member.builder()
+              .emailAddress("email@example.com")
+              .nickname("new nickname")
+              .id(2137L)
+              .version(12345)
+              .build();
+
+      // when
+      var result = tested.updateWithOptimisticLock(forUpdate);
+
+      // then
+      assertThat(result).isEmpty();
+    }
+
+    @ParameterizedTest
+    @ValueSource(longs = {1, -1, 2, -2})
+    void failsToUpdateWhenVersionsDoNotMatch(long versionDiff) {
+      // given
+      var existingMember =
+          tested.insert(
+              NewMember.builder().nickname("a nickname").emailAddress("email@example.com").build());
+      var forUpdate =
+          Member.builder()
+              .emailAddress("email@example.com")
+              .nickname("new nickname")
+              .id(existingMember.id())
+              .version(existingMember.version() - versionDiff)
+              .build();
+
+      // when
+      var result = tested.updateWithOptimisticLock(forUpdate);
+
+      // then
+      assertThat(result).isEmpty();
     }
   }
 }

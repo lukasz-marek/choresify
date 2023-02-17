@@ -9,6 +9,8 @@ public interface Members {
 
   Member save(Member member);
 
+  Optional<Member> updateWithOptimisticLock(Member member);
+
   Optional<Member> findById(long memberId);
 
   Optional<Member> findByEmail(String email);
