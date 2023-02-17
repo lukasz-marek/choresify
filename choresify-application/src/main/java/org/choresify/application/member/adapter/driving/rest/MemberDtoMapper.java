@@ -10,7 +10,7 @@ import org.mapstruct.ReportingPolicy;
     unmappedSourcePolicy = ReportingPolicy.ERROR,
     unmappedTargetPolicy = ReportingPolicy.ERROR,
     componentModel = ComponentModel.SPRING)
-public interface MemberDtoMapper {
+interface MemberDtoMapper {
   MemberDto map(Member member);
 
   NewMember map(NewMemberDto newMemberDto);
