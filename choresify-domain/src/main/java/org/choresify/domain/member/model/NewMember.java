@@ -10,6 +10,7 @@ public record NewMember(String nickname, String emailAddress) {
   public NewMember {
     Invariants.requireNonNull(nickname, "nickname");
     Invariants.requireNonNull(emailAddress, "emailAddress");
+
     emailAddress = EmailAddressSanitizer.sanitize(emailAddress);
     nickname = NameSanitizer.sanitize(nickname);
   }
