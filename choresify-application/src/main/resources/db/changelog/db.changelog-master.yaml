@@ -22,6 +22,7 @@ databaseChangeLog:
                     nullable: false
                     unique: true
             tableName: member
+
   - changeSet:
       id: 060220231218
       author: lmarek
@@ -32,6 +33,7 @@ databaseChangeLog:
                   name: email_address
             indexName: idx_email_address
             tableName: member
+
   - changeSet:
       id: 170220231551
       author: lmarek
@@ -43,6 +45,7 @@ databaseChangeLog:
               type: bigint
               constraints:
                 nullable: false
+
   - changeSet:
       id: 170220232345
       author: lmarek
@@ -65,3 +68,40 @@ databaseChangeLog:
                   constraints:
                     nullable: false
             tableName: household
+
+  - changeSet:
+      id: 170220232351
+      author: lmarek
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  name: member_id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: household_id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: role
+                  type: text
+                  constraints:
+                    nullable: false
+            tableName: household_member
+        - addForeignKeyConstraint:
+            baseColumnNames: member_id
+            baseTableName: household_member
+            referencedColumnNames: id
+            referencedTableName: member
+            onDelete: CASCADE
+            constraintName: fk_member_id
+        - addForeignKeyConstraint:
+            baseColumnNames: household_id
+            baseTableName: household_member
+            referencedColumnNames: id
+            referencedTableName: household
+            onDelete: CASCADE
+            constraintName: fk_household_id
