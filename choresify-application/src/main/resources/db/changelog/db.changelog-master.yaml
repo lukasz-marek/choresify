@@ -105,3 +105,20 @@ databaseChangeLog:
             referencedTableName: household
             onDelete: CASCADE
             constraintName: fk_household_id
+
+  - changeSet:
+      id: 180220230018
+      author: lmarek
+      changes:
+        - createIndex:
+            columns:
+              - column:
+                  name: member_id
+            indexName: idx_member_id
+            tableName: household_member
+        - createIndex:
+            columns:
+              - column:
+                  name: household_id
+            indexName: idx_household_id
+            tableName: household_member
