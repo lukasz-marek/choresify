@@ -1,4 +1,4 @@
-package org.choresify.application.transaction;
+package org.choresify.application.common.transaction;
 
 import java.util.function.Supplier;
 import org.springframework.stereotype.Service;

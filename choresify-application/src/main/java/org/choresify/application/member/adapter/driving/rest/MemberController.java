@@ -7,7 +7,7 @@ import static org.springframework.http.HttpStatus.OK;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.choresify.application.transaction.TransactionalRunner;
+import org.choresify.application.common.transaction.TransactionalRunner;
 import org.choresify.domain.member.usecase.CreateMemberUseCase;
 import org.choresify.domain.member.usecase.GetMemberByIdUseCase;
 import org.choresify.domain.member.usecase.UpdateMemberUseCase;

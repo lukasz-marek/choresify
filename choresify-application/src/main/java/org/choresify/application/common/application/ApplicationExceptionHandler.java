@@ -1,4 +1,4 @@
-package org.choresify.application.common;
+package org.choresify.application.common.application;
 
 import java.time.Instant;
 import lombok.extern.slf4j.Slf4j;

@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import java.util.stream.Stream;
-import org.choresify.application.transaction.TransactionalRunner;
+import org.choresify.application.common.transaction.TransactionalRunner;
 import org.choresify.domain.member.model.Member;
 import org.choresify.domain.member.model.NewMember;
 import org.choresify.domain.member.port.Members;
