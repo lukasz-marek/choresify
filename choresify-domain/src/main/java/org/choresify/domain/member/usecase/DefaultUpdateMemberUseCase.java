@@ -24,6 +24,7 @@ public final class DefaultUpdateMemberUseCase implements UpdateMemberUseCase {
   }
 
   private void checkPreconditions(Member member) {
+    // todo try to fetch member just once if ids match
     if (!memberExists(member.id())) {
       log.info("Rejecting update of [{}] - no such member exists", member);
       throw new NoSuchEntityException("Cannot update non-existent member");
