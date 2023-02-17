@@ -63,6 +63,7 @@ class MemberApiTest {
       assertThat(createdMember.getNickname()).isEqualTo("Doctor Strange");
       assertThat(createdMember.getEmailAddress()).isEqualTo("doctor@strange.com");
       assertThat(createdMember.getId()).isPositive();
+      assertThat(createdMember.getVersion()).isEqualTo(0);
     }
 
     @Test
@@ -184,6 +185,33 @@ class MemberApiTest {
       assertThat(memberAfterUpdate.getId()).isEqualTo(updateInput.getId());
       assertThat(memberAfterUpdate.getNickname()).isEqualTo(updateInput.getNickname());
       assertThat(memberAfterUpdate.getEmailAddress()).isEqualTo(updateInput.getEmailAddress());
+      assertThat(memberAfterUpdate.getVersion()).isEqualTo(updateInput.getVersion() + 1);
+    }
+
+    @Test
+    void updateIsRejectedWhenOptimisticLockFails() {
+      // given
+      var existingMember =
+          insert(NewMember.builder().nickname("Alan").emailAddress("alan@kay.com").build());
+      var updateInput =
+          MemberDto.builder()
+              .nickname("John")
+              .emailAddress("john@mccarthy.com")
+              .id(existingMember.id())
+              .version(existingMember.version() + 1)
+              .build();
+
+      // when
+      var updated =
+          testRestTemplate.exchange(
+              RequestEntity.put(MEMBER_ENDPOINT + "/{memberId}", existingMember.id())
+                  .body(updateInput),
+              MemberDto.class);
+
+      // then
+
+      // then
+      assertThat(updated.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
     }
 
     @Test
