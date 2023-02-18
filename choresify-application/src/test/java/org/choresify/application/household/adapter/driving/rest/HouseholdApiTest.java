@@ -41,7 +41,7 @@ class HouseholdApiTest {
       var dto =
           NewHouseholdDto.builder()
               .name("Bag End")
-              .members(Set.of(new HouseholdMemberDto(existingMember.id(), RoleDto.OWNER)))
+              .members(Set.of(new HouseholdMemberDto(existingMember.id())))
               .build();
 
       // when
@@ -54,7 +54,7 @@ class HouseholdApiTest {
       assertThat(createdHousehold.id()).isPositive();
       assertThat(createdHousehold.name()).isEqualTo("Bag End");
       assertThat(createdHousehold.members())
-          .containsExactly(new HouseholdMemberDto(existingMember.id(), RoleDto.OWNER));
+          .containsExactly(new HouseholdMemberDto(existingMember.id()));
       assertThat(createdHousehold.version()).isEqualTo(0);
     }
   }

@@ -85,11 +85,6 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     primaryKey: true
-              - column:
-                  name: role
-                  type: text
-                  constraints:
-                    nullable: false
             tableName: household_member
         - addForeignKeyConstraint:
             baseColumnNames: member_id
