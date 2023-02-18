@@ -5,7 +5,6 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.choresify.domain.exception.Invariants;
-import org.choresify.domain.exception.NoSuchEntityException;
 import org.choresify.domain.household.model.Household;
 import org.choresify.domain.household.model.HouseholdMember;
 import org.choresify.domain.household.model.NewHousehold;
@@ -22,22 +21,24 @@ public class DefaultCreateHouseholdUseCase implements CreateHouseholdUseCase {
   @SuppressFBWarnings("EI_EXPOSE_REP2")
   private final Households households;
 
-  private static void checkInvariants(NewHousehold newHousehold) {
-    Invariants.requireNonNull(newHousehold, "new household");
-    Invariants.requireTrue(
-        !newHousehold.members().isEmpty(), "At least one member must be referenced");
-  }
-
   @Override
   public Household execute(NewHousehold newHousehold) {
     checkInvariants(newHousehold);
-    var existingReferencedMembers = getReferencedMembers(newHousehold);
-    if (existingReferencedMembers.size() < newHousehold.members().size()) {
-      log.info("Some of referenced members do not exist - [{}] will not be created", newHousehold);
-      throw new NoSuchEntityException("Some of referenced members do not exist");
-    }
     log.info("All validations passed - [{}] will be inserted", newHousehold);
     return households.insert(newHousehold);
+  }
+
+  private void checkInvariants(NewHousehold newHousehold) {
+    Invariants.requireNonNull(newHousehold, "new household");
+    Invariants.requireTrue(
+        !newHousehold.members().isEmpty(), "At least one member must be referenced");
+    Invariants.requireTrue(
+        allReferencedMembersExist(newHousehold), "Some of referenced members do not exist");
+  }
+
+  private boolean allReferencedMembersExist(NewHousehold newHousehold) {
+    var existingReferencedMembers = getReferencedMembers(newHousehold);
+    return existingReferencedMembers.size() == newHousehold.members().size();
   }
 
   private Map<Long, Member> getReferencedMembers(NewHousehold newHousehold) {

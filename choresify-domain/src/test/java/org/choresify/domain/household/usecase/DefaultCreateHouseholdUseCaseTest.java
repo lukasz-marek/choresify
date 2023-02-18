@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import java.util.Collections;
 import java.util.Set;
 import org.choresify.domain.exception.InvariantViolationException;
-import org.choresify.domain.exception.NoSuchEntityException;
 import org.choresify.domain.household.model.HouseholdMember;
 import org.choresify.domain.household.model.NewHousehold;
 import org.choresify.domain.household.port.Households;
@@ -53,7 +52,7 @@ class DefaultCreateHouseholdUseCaseTest {
 
     // when
     var throwable =
-        catchThrowableOfType(() -> tested.execute(newHousehold), NoSuchEntityException.class);
+        catchThrowableOfType(() -> tested.execute(newHousehold), InvariantViolationException.class);
 
     // then
     assertThat(throwable).hasMessage("Some of referenced members do not exist");
