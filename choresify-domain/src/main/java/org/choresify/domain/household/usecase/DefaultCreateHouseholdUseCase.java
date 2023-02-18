@@ -1,5 +1,6 @@
 package org.choresify.domain.household.usecase;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,8 +15,11 @@ import org.choresify.domain.member.port.Members;
 
 @Slf4j
 @RequiredArgsConstructor
-class DefaultCreateHouseholdUseCase implements CreateHouseholdUseCase {
+public class DefaultCreateHouseholdUseCase implements CreateHouseholdUseCase {
+  @SuppressFBWarnings("EI_EXPOSE_REP2")
   private final Members members;
+
+  @SuppressFBWarnings("EI_EXPOSE_REP2")
   private final Households households;
 
   private static void checkInvariants(NewHousehold newHousehold) {

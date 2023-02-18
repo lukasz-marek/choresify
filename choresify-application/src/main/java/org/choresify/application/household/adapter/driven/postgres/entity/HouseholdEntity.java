@@ -1,5 +1,6 @@
 package org.choresify.application.household.adapter.driven.postgres.entity;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,6 +20,9 @@ import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 import org.choresify.application.member.adapter.driven.postgres.entity.MemberEntity;
 
+@SuppressFBWarnings(
+    value = {"EI_EXPOSE_REP2", "EI_EXPOSE_REP"},
+    justification = "Required by JPA")
 @Builder
 @Getter
 @Setter
@@ -38,7 +42,7 @@ public class HouseholdEntity {
 
   @ManyToMany(cascade = CascadeType.ALL)
   @JoinTable(
-      name = "household_members",
+      name = "household_member",
       joinColumns = @JoinColumn(name = "household_id"),
       inverseJoinColumns = @JoinColumn(name = "member_id"))
   Set<MemberEntity> members;
