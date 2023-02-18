@@ -1,7 +1,8 @@
 package org.choresify.application.household.adapter.driven.postgres;
 
-import java.util.HashSet;
-import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +10,6 @@ import org.choresify.application.household.adapter.driven.postgres.entity.Househ
 import org.choresify.application.member.adapter.driven.postgres.MembersRepository;
 import org.choresify.application.member.adapter.driven.postgres.entity.MemberEntity;
 import org.choresify.domain.household.model.Household;
-import org.choresify.domain.household.model.HouseholdMember;
 import org.choresify.domain.household.model.NewHousehold;
 import org.choresify.domain.household.port.Households;
 import org.springframework.stereotype.Repository;
@@ -21,35 +21,42 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @RequiredArgsConstructor
 class PostgresHouseholds implements Households {
-  private final HouseholdRepository householdRepository;
-  private final MembersRepository membersRepository;
+  private final HouseholdsRepository householdsRepository;
   private final HouseholdEntityMapper mapper;
-
+  private final MembersRepository membersRepository;
+  /*
+  For consistency, this requires REPEATABLE_READS isolation level (or lock on members)
+   */
   @Override
-  public Optional<Household> insert(@NonNull NewHousehold newHousehold) {
-    var entityForInsert = buildEntity(newHousehold);
-    return entityForInsert.map(householdRepository::save).map(mapper::map);
+  public Household insert(@NonNull NewHousehold newHousehold) {
+    var entityForInsert = prepareEntity(newHousehold);
+    var inserted = householdsRepository.save(entityForInsert);
+    return mapper.map(inserted);
   }
 
-  private Optional<HouseholdEntity> buildEntity(NewHousehold newHousehold) {
-    var actualMembers = fetchReferencedMembers(newHousehold);
-    if (actualMembers.size() < newHousehold.members().size()) {
-      log.info("Some members from [{}] are missing - insertion rejected", newHousehold);
-      return Optional.empty();
+  private HouseholdEntity prepareEntity(NewHousehold newHousehold) {
+    var entityForInsert = mapper.map(newHousehold);
+    var actualMembers = fetchReferencedMembers(entityForInsert);
+    if (actualMembers.size() < entityForInsert.getMembers().size()) {
+      log.warn(
+          "Some members referenced in [{}] are missing - insert will not be performed",
+          newHousehold);
+      throw new RuntimeException(
+          "Some members from [%s] are missing from the database".formatted(newHousehold.members()));
     }
 
-    var entityForInsert = mapper.map(newHousehold);
     entityForInsert.setMembers(actualMembers);
-    log.info("All members from [{}] are present - proceeding with insertion", newHousehold);
-    return Optional.of(entityForInsert);
+    log.info("[{}] is ready to be inserted - proceeding", newHousehold);
+    return entityForInsert;
   }
 
-  private HashSet<MemberEntity> fetchReferencedMembers(NewHousehold newHousehold) {
-    var members =
-        membersRepository.findAllById(
-            newHousehold.members().stream().map(HouseholdMember::memberId).toList());
-    var actualMembers = new HashSet<MemberEntity>();
-    members.forEach(actualMembers::add);
-    return actualMembers;
+  private Set<MemberEntity> fetchReferencedMembers(HouseholdEntity entityForInsert) {
+    return StreamSupport.stream(
+            membersRepository
+                .findAllById(
+                    entityForInsert.getMembers().stream().map(MemberEntity::getId).toList())
+                .spliterator(),
+            false)
+        .collect(Collectors.toSet());
   }
 }

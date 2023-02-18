@@ -5,4 +5,4 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-interface HouseholdRepository extends CrudRepository<HouseholdEntity, Long> {}
+interface HouseholdsRepository extends CrudRepository<HouseholdEntity, Long> {}

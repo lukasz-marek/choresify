@@ -1,6 +1,7 @@
 package org.choresify.application.household.adapter.driven.postgres;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
 import java.util.Set;
 import java.util.UUID;
@@ -42,11 +43,9 @@ class PostgresHouseholdsTest {
               .build();
 
       // when
-      var result = tested.insert(newHousehold);
+      var household = tested.insert(newHousehold);
 
       // then
-      assertThat(result).isPresent();
-      var household = result.get();
       assertThat(household.version()).isEqualTo(0);
       assertThat(household.name()).isEqualTo("a household");
       assertThat(household.members())
@@ -63,10 +62,10 @@ class PostgresHouseholdsTest {
               .build();
 
       // when
-      var result = tested.insert(newHousehold);
+      var throwable = catchThrowable(() -> tested.insert(newHousehold));
 
       // then
-      assertThat(result).isEmpty();
+      assertThat(throwable).isNotNull();
     }
   }
 }

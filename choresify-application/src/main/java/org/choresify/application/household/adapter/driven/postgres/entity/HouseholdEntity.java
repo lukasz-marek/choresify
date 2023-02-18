@@ -1,5 +1,6 @@
 package org.choresify.application.household.adapter.driven.postgres.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -35,7 +36,7 @@ public class HouseholdEntity {
   @ToString.Include String name;
   @ToString.Include long version;
 
-  @ManyToMany
+  @ManyToMany(cascade = CascadeType.ALL)
   @JoinTable(
       name = "household_members",
       joinColumns = @JoinColumn(name = "household_id"),
