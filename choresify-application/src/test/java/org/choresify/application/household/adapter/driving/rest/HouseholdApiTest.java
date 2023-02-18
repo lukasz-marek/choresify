@@ -28,7 +28,7 @@ class HouseholdApiTest {
             members.insert(
                 NewMember.builder()
                     .nickname("a new member")
-                    .emailAddress("email@example.com")
+                    .emailAddress("randomEmail@example.com")
                     .build()));
   }
 
