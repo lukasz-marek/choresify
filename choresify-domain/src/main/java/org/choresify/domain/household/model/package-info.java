@@ -1,4 +1,4 @@
-@DefaultAnnotationForParameters(Nullable.class)
+@DefaultAnnotationForParameters(NonNull.class)
 @DefaultAnnotationForFields(Nullable.class)
 @DefaultAnnotationForMethods(NonNull.class)
 package org.choresify.domain.household.model;

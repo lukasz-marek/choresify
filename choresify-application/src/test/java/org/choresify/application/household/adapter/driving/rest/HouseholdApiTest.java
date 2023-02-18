@@ -3,6 +3,7 @@ package org.choresify.application.household.adapter.driving.rest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Set;
+import org.choresify.application.common.transaction.TransactionalRunner;
 import org.choresify.domain.member.model.Member;
 import org.choresify.domain.member.model.NewMember;
 import org.choresify.domain.member.port.Members;
@@ -19,10 +20,16 @@ class HouseholdApiTest {
 
   @Autowired private TestRestTemplate testRestTemplate;
   @Autowired private Members members;
+  @Autowired private TransactionalRunner transactionalRunner;
 
   private Member createNewMember() {
-    return members.insert(
-        NewMember.builder().nickname("a new member").emailAddress("email@example.com").build());
+    return transactionalRunner.execute(
+        () ->
+            members.insert(
+                NewMember.builder()
+                    .nickname("a new member")
+                    .emailAddress("email@example.com")
+                    .build()));
   }
 
   @Nested
