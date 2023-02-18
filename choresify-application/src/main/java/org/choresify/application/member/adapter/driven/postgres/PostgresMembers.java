@@ -1,6 +1,10 @@
 package org.choresify.application.member.adapter.driven.postgres;
 
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -72,5 +76,13 @@ class PostgresMembers implements Members {
   @Override
   public Optional<Member> findByEmail(@NonNull String email) {
     return membersRepository.findByEmailAddress(email).map(memberEntityMapper::map);
+  }
+
+  @Override
+  public Map<Long, Member> findById(Iterable<Long> memberIds) {
+    var matchingMembers = membersRepository.findAllById(memberIds);
+    return StreamSupport.stream(matchingMembers.spliterator(), false)
+        .map(memberEntityMapper::map)
+        .collect(Collectors.toMap(Member::id, Function.identity()));
   }
 }

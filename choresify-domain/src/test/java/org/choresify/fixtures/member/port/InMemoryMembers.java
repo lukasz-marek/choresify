@@ -1,8 +1,11 @@
 package org.choresify.fixtures.member.port;
 
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.choresify.domain.member.model.Member;
 import org.choresify.domain.member.model.NewMember;
 import org.choresify.domain.member.port.Members;
@@ -56,5 +59,14 @@ public final class InMemoryMembers implements Members {
     return storage.values().stream()
         .filter(member -> member.emailAddress().equals(email))
         .findAny();
+  }
+
+  @Override
+  public Map<Long, Member> findById(Iterable<Long> memberIds) {
+    var requestedIds = new HashSet<Long>();
+    memberIds.forEach(requestedIds::add);
+    return storage.values().stream()
+        .filter(member -> requestedIds.contains(member.id()))
+        .collect(Collectors.toMap(Member::id, Function.identity()));
   }
 }

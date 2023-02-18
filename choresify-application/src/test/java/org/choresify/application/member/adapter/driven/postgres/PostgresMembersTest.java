@@ -2,6 +2,8 @@ package org.choresify.application.member.adapter.driven.postgres;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Collections;
+import java.util.List;
 import org.choresify.domain.member.model.Member;
 import org.choresify.domain.member.model.NewMember;
 import org.choresify.fixtures.IntegrationTest;
@@ -268,6 +270,76 @@ class PostgresMembersTest {
 
       // then
       assertThat(result).isEmpty();
+    }
+  }
+
+  @Nested
+  class GetManyByIds {
+    @Test
+    void returnsExistingMembersByIds() {
+      // given
+      var existingMember1 =
+          tested.insert(
+              NewMember.builder()
+                  .nickname("a nickname")
+                  .emailAddress("email1@example.com")
+                  .build());
+      var existingMember2 =
+          tested.insert(
+              NewMember.builder()
+                  .nickname("a nickname")
+                  .emailAddress("email2@example.com")
+                  .build());
+      // when
+      var results = tested.findById(List.of(existingMember1.id(), existingMember2.id()));
+
+      // then
+      assertThat(results).hasSize(2);
+      assertThat(results.get(existingMember1.id())).isEqualTo(existingMember1);
+      assertThat(results.get(existingMember2.id())).isEqualTo(existingMember2);
+    }
+
+    @Test
+    void nonExistentMembersAreIgnored() {
+      // given
+      var existingMember1 =
+          tested.insert(
+              NewMember.builder()
+                  .nickname("a nickname")
+                  .emailAddress("email1@example.com")
+                  .build());
+      var existingMember2 =
+          tested.insert(
+              NewMember.builder()
+                  .nickname("a nickname")
+                  .emailAddress("email2@example.com")
+                  .build());
+      // when
+      var results =
+          tested.findById(List.of(existingMember1.id(), 2137L, existingMember2.id(), 1410L));
+
+      // then
+      assertThat(results).hasSize(2);
+      assertThat(results.get(existingMember1.id())).isEqualTo(existingMember1);
+      assertThat(results.get(existingMember2.id())).isEqualTo(existingMember2);
+    }
+
+    @Test
+    void returnsEmptyMapWhenNothingMatches() {
+      // when
+      var results = tested.findById(List.of(2137L, 1410L));
+
+      // then
+      assertThat(results).isEmpty();
+    }
+
+    @Test
+    void returnsEmptyMapOnEmptyInput() {
+      // when
+      var results = tested.findById(Collections.emptyList());
+
+      // then
+      assertThat(results).isEmpty();
     }
   }
 }
