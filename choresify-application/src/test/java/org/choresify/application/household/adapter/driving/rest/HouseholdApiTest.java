@@ -57,5 +57,23 @@ class HouseholdApiTest {
           .containsExactly(new HouseholdMemberDto(existingMember.id()));
       assertThat(createdHousehold.version()).isEqualTo(0);
     }
+
+    @Test
+    void failsToCreateHouseholdWhenAnyMemberDoesNotExist() {
+      // given
+      var existingMember = createNewMember();
+      var dto =
+          NewHouseholdDto.builder()
+              .name("Bag End")
+              .members(
+                  Set.of(new HouseholdMemberDto(existingMember.id()), new HouseholdMemberDto(2137)))
+              .build();
+
+      // when
+      var response = testRestTemplate.postForEntity(HOUSEHOLD_ENDPOINT, dto, String.class);
+
+      // then
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
   }
 }
