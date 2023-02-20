@@ -4,6 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Set;
 import org.choresify.application.common.transaction.TransactionalRunner;
+import org.choresify.domain.household.model.Household;
+import org.choresify.domain.household.model.HouseholdMember;
+import org.choresify.domain.household.model.NewHousehold;
+import org.choresify.domain.household.port.Households;
 import org.choresify.domain.member.model.Member;
 import org.choresify.domain.member.model.NewMember;
 import org.choresify.domain.member.port.Members;
@@ -21,6 +25,11 @@ class HouseholdApiTest {
   @Autowired private TestRestTemplate testRestTemplate;
   @Autowired private Members members;
   @Autowired private TransactionalRunner transactionalRunner;
+  @Autowired private Households households;
+
+  private Household insert(NewHousehold newHousehold) {
+    return transactionalRunner.execute(() -> households.insert(newHousehold));
+  }
 
   private Member createNewMember() {
     return transactionalRunner.execute(
@@ -74,6 +83,36 @@ class HouseholdApiTest {
 
       // then
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Nested
+  class Read {
+    @Test
+    void canReadExistingHousehold() {
+      // given
+      var existingMember = createNewMember();
+      var existingHousehold =
+          insert(
+              NewHousehold.builder()
+                  .name("a household")
+                  .members(Set.of(new HouseholdMember(existingMember.id())))
+                  .build());
+
+      // when
+      var response =
+          testRestTemplate.getForEntity(
+              HOUSEHOLD_ENDPOINT + "/" + existingHousehold.id(), HouseholdDto.class);
+
+      // then
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+      var responseBody = response.getBody();
+      assertThat(responseBody).isNotNull();
+      assertThat(responseBody.version()).isNotNegative();
+      assertThat(responseBody.name()).isEqualTo("a household");
+      assertThat(responseBody.id()).isEqualTo(existingHousehold.id());
+      assertThat(responseBody.members())
+          .containsExactly(new HouseholdMemberDto(existingMember.id()));
     }
   }
 }
