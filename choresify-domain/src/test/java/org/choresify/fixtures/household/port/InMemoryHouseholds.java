@@ -2,6 +2,7 @@ package org.choresify.fixtures.household.port;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import org.choresify.domain.household.model.Household;
 import org.choresify.domain.household.model.NewHousehold;
@@ -27,5 +28,16 @@ public final class InMemoryHouseholds implements Households {
   @Override
   public Optional<Household> getById(long householdId) {
     return Optional.ofNullable(storage.get(householdId));
+  }
+
+  @Override
+  public Optional<Household> updateWithOptimisticLock(Household household) {
+    var existing = storage.get(household.id());
+    if (existing != null && Objects.equals(existing.version(), household.version())) {
+      var newRevision = household.toBuilder().version(household.version() + 1).build();
+      storage.put(newRevision.id(), newRevision);
+      return Optional.of(newRevision);
+    }
+    return Optional.empty();
   }
 }

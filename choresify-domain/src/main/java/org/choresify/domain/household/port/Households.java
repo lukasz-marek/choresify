@@ -9,4 +9,6 @@ public interface Households {
   Household insert(NewHousehold newHousehold);
 
   Optional<Household> getById(long householdId);
+
+  Optional<Household> updateWithOptimisticLock(Household household);
 }

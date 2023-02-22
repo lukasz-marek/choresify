@@ -1,5 +1,6 @@
 package org.choresify.application.household.adapter.driven.postgres;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -30,7 +31,7 @@ class PostgresHouseholds implements Households {
    */
   @Override
   public Household insert(@NonNull NewHousehold newHousehold) {
-    var entityForInsert = prepareEntity(newHousehold);
+    var entityForInsert = createEntity(newHousehold);
     var inserted = householdsRepository.save(entityForInsert);
     return mapper.map(inserted);
   }
@@ -40,7 +41,38 @@ class PostgresHouseholds implements Households {
     return householdsRepository.findById(householdId).map(mapper::map);
   }
 
-  private HouseholdEntity prepareEntity(NewHousehold newHousehold) {
+  /*
+  For correctness, requires REPEATABLE_READS or SELECT FOR UPDATE
+   */
+  @Override
+  public Optional<Household> updateWithOptimisticLock(Household household) {
+    var existingHousehold = householdsRepository.findById(household.id());
+    var versionMatches =
+        existingHousehold.map(that -> Objects.equals(that.getId(), household.id())).orElse(false);
+    if (versionMatches) {
+      log.info("Optimistic locking of [{}] successful - update will be performed", household);
+      var entity = createEntity(household);
+      entity.setVersion(entity.getVersion() + 1);
+      return Optional.of(householdsRepository.save(entity)).map(mapper::map);
+    }
+    log.info("Optimistic locking failed for [{}] - update ignored", household);
+    return Optional.empty();
+  }
+
+  private HouseholdEntity createEntity(Household household) {
+    var entity = mapper.map(household);
+    var actualMembers = fetchReferencedMembers(entity);
+    if (actualMembers.size() < entity.getMembers().size()) {
+      log.warn("Some members referenced in [{}] are missing", household);
+      throw new RuntimeException(
+          "Some members from [%s] are missing from the database".formatted(household.members()));
+    }
+
+    entity.setMembers(actualMembers);
+    return entity;
+  }
+
+  private HouseholdEntity createEntity(NewHousehold newHousehold) {
     var entityForInsert = mapper.map(newHousehold);
     var actualMembers = fetchReferencedMembers(entityForInsert);
     if (actualMembers.size() < entityForInsert.getMembers().size()) {
@@ -56,11 +88,10 @@ class PostgresHouseholds implements Households {
     return entityForInsert;
   }
 
-  private Set<MemberEntity> fetchReferencedMembers(HouseholdEntity entityForInsert) {
+  private Set<MemberEntity> fetchReferencedMembers(HouseholdEntity household) {
     return StreamSupport.stream(
             membersRepository
-                .findAllById(
-                    entityForInsert.getMembers().stream().map(MemberEntity::getId).toList())
+                .findAllById(household.getMembers().stream().map(MemberEntity::getId).toList())
                 .spliterator(),
             false)
         .collect(Collectors.toSet());

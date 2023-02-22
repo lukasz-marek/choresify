@@ -3,6 +3,7 @@ package org.choresify.application.household.adapter.driven.postgres;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
+import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
 import org.choresify.domain.household.model.HouseholdMember;
@@ -101,6 +102,65 @@ class PostgresHouseholdsTest {
 
       // then
       assertThat(maybeHousehold).isEmpty();
+    }
+  }
+
+  @Nested
+  class Update {
+    @Test
+    void updateIsSuccessfulWhenHouseholdExistsAndVersionMatches() {
+      // given
+      var existingMember = createMember();
+      var newHousehold =
+          NewHousehold.builder()
+              .name("a household")
+              .members(Set.of(new HouseholdMember(existingMember.id())))
+              .build();
+      var exitingHousehold = tested.insert(newHousehold);
+      var forUpdate =
+          exitingHousehold.toBuilder().name("a new name").members(Collections.emptySet()).build();
+
+      // when
+      var maybeHousehold = tested.updateWithOptimisticLock(forUpdate);
+
+      // then
+      assertThat(maybeHousehold).isPresent();
+      var household = maybeHousehold.get();
+      assertThat(household.version()).isEqualTo(exitingHousehold.version() + 1);
+      assertThat(household.name()).isEqualTo("a new name");
+      assertThat(household.members()).isEmpty();
+    }
+
+    @Test
+    void updateIsSuccessfulWhenAllReferencedMembersExistAndHouseholdExistsAndVersionMatches() {
+      // given
+      var existingMember1 = createMember();
+      var existingMember2 = createMember();
+      var newHousehold =
+          NewHousehold.builder()
+              .name("a household")
+              .members(Set.of(new HouseholdMember(existingMember1.id())))
+              .build();
+      var exitingHousehold = tested.insert(newHousehold);
+      var forUpdate =
+          exitingHousehold.toBuilder()
+              .members(
+                  Set.of(
+                      new HouseholdMember(existingMember1.id()),
+                      new HouseholdMember(existingMember2.id())))
+              .build();
+
+      // when
+      var maybeHousehold = tested.updateWithOptimisticLock(forUpdate);
+
+      // then
+      assertThat(maybeHousehold).isPresent();
+      var household = maybeHousehold.get();
+      assertThat(household.version()).isEqualTo(exitingHousehold.version() + 1);
+      assertThat(household.name()).isEqualTo("a household");
+      assertThat(household.members())
+          .containsExactlyInAnyOrder(
+              new HouseholdMember(existingMember1.id()), new HouseholdMember(existingMember2.id()));
     }
   }
 }

@@ -6,7 +6,7 @@ import lombok.Builder;
 import org.choresify.domain.common.sanitation.NameSanitizer;
 import org.choresify.domain.exception.Invariants;
 
-@Builder
+@Builder(toBuilder = true)
 @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "Copy.of called in constructor")
 public record Household(long id, String name, Set<HouseholdMember> members, long version) {
 
