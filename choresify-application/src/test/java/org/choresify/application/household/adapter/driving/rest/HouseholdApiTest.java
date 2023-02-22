@@ -114,5 +114,14 @@ class HouseholdApiTest {
       assertThat(responseBody.members())
           .containsExactly(new HouseholdMemberDto(existingMember.id()));
     }
+
+    @Test
+    void returnsNotFoundWhenHouseholdIsNotPresent() {
+      // when
+      var response = testRestTemplate.getForEntity(HOUSEHOLD_ENDPOINT + "/" + 2137, String.class);
+
+      // then
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
   }
 }
