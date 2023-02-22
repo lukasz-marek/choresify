@@ -15,6 +15,6 @@ public class DefaultGetHouseholdByIdUseCase implements GetHouseholdByIdUseCase {
 
   @Override
   public Optional<Household> execute(long id) {
-    return Optional.empty();
+    return households.getById(id);
   }
 }
