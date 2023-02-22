@@ -68,4 +68,39 @@ class PostgresHouseholdsTest {
       assertThat(throwable).isNotNull();
     }
   }
+
+  @Nested
+  class GetById {
+
+    @Test
+    void canFetchExistingHousehold() {
+      // given
+      var existingMember = createMember();
+      var newHousehold =
+          NewHousehold.builder()
+              .name("a household")
+              .members(Set.of(new HouseholdMember(existingMember.id())))
+              .build();
+      var existingId = tested.insert(newHousehold).id();
+      // when
+      var maybeHousehold = tested.getById(existingId);
+
+      // then
+      assertThat(maybeHousehold).isPresent();
+      var household = maybeHousehold.get();
+      assertThat(household.version()).isEqualTo(0);
+      assertThat(household.name()).isEqualTo("a household");
+      assertThat(household.members())
+          .containsExactlyInAnyOrder(new HouseholdMember(existingMember.id()));
+    }
+
+    @Test
+    void returnsEmptyWhenHouseholdIsNotExistent() {
+      // when
+      var maybeHousehold = tested.getById(2137L);
+
+      // then
+      assertThat(maybeHousehold).isEmpty();
+    }
+  }
 }

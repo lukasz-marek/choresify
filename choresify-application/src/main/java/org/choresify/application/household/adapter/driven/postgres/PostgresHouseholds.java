@@ -1,5 +1,6 @@
 package org.choresify.application.household.adapter.driven.postgres;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -32,6 +33,11 @@ class PostgresHouseholds implements Households {
     var entityForInsert = prepareEntity(newHousehold);
     var inserted = householdsRepository.save(entityForInsert);
     return mapper.map(inserted);
+  }
+
+  @Override
+  public Optional<Household> getById(long householdId) {
+    return householdsRepository.findById(householdId).map(mapper::map);
   }
 
   private HouseholdEntity prepareEntity(NewHousehold newHousehold) {
