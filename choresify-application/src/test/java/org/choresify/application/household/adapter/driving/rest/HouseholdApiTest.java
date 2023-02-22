@@ -3,6 +3,7 @@ package org.choresify.application.household.adapter.driving.rest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Set;
+import java.util.UUID;
 import org.choresify.application.common.transaction.TransactionalRunner;
 import org.choresify.domain.household.model.Household;
 import org.choresify.domain.household.model.HouseholdMember;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
 
 @IntegrationTest
 class HouseholdApiTest {
@@ -37,7 +39,7 @@ class HouseholdApiTest {
             members.insert(
                 NewMember.builder()
                     .nickname("a new member")
-                    .emailAddress("randomEmail@example.com")
+                    .emailAddress(UUID.randomUUID() + "@example.com")
                     .build()));
   }
 
@@ -122,6 +124,45 @@ class HouseholdApiTest {
 
       // then
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+  }
+
+  @Nested
+  class Update {
+    @Test
+    void canUpdateWhenIdAndVersionMatch() {
+      // given
+      var member1 = createNewMember();
+      var member2 = createNewMember();
+      var existingHousehold =
+          insert(
+              NewHousehold.builder()
+                  .name("a household")
+                  .members(Set.of(new HouseholdMember(member1.id())))
+                  .build());
+      var forUpdate =
+          HouseholdDto.builder()
+              .id(existingHousehold.id())
+              .version(existingHousehold.version())
+              .name("a new name")
+              .members(Set.of(new HouseholdMemberDto(member2.id())))
+              .build();
+
+      // when
+      var response =
+          testRestTemplate.exchange(
+              RequestEntity.put(HOUSEHOLD_ENDPOINT + "/{householdId}", existingHousehold.id())
+                  .body(forUpdate),
+              HouseholdDto.class);
+
+      // then
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+      var updatedHousehold = response.getBody();
+      assertThat(updatedHousehold).isNotNull();
+      assertThat(updatedHousehold.id()).isEqualTo(forUpdate.id());
+      assertThat(updatedHousehold.version()).isEqualTo(forUpdate.version() + 1);
+      assertThat(updatedHousehold.members()).containsExactly(new HouseholdMemberDto(member2.id()));
+      assertThat(updatedHousehold.name()).isEqualTo(forUpdate.name());
     }
   }
 }
