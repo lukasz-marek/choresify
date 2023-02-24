@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.Set;
 import org.choresify.application.household.adapter.driven.postgres.entity.HouseholdEntity;
 import org.choresify.application.member.adapter.driven.postgres.entity.MemberEntity;
+import org.choresify.domain.household.model.Household;
 import org.choresify.domain.household.model.HouseholdMember;
 import org.choresify.domain.household.model.NewHousehold;
 import org.junit.jupiter.api.Nested;
@@ -58,6 +59,31 @@ class HouseholdEntityMapperTest {
       assertThat(household.version()).isEqualTo(37);
       assertThat(household.name()).isEqualTo("a household");
       assertThat(household.members()).containsExactlyInAnyOrder(new HouseholdMember(55));
+    }
+  }
+
+  @Nested
+  class HouseholdToEntity {
+    @Test
+    void allFieldsAreMapped() {
+      // given
+      var newHousehold =
+          Household.builder()
+              .name("a household")
+              .members(Set.of(new HouseholdMember(5)))
+              .id(21)
+              .version(37)
+              .build();
+
+      // when
+      var entity = tested.map(newHousehold);
+
+      // then
+      assertThat(entity.getId()).isEqualTo(21);
+      assertThat(entity.getVersion()).isEqualTo(37);
+      assertThat(entity.getName()).isEqualTo("a household");
+      assertThat(entity.getMembers())
+          .containsExactlyInAnyOrder(MemberEntity.builder().id(5L).build());
     }
   }
 }

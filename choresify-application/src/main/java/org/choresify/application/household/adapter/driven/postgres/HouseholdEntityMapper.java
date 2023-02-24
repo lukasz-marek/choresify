@@ -23,6 +23,8 @@ abstract class HouseholdEntityMapper {
 
   public abstract Household map(HouseholdEntity entity);
 
+  public abstract HouseholdEntity map(Household household);
+
   protected HouseholdMember map(MemberEntity entity) {
     return Optional.ofNullable(entity)
         .filter(anEntity -> anEntity.getId() != null)
