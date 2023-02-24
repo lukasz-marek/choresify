@@ -47,9 +47,12 @@ class PostgresHouseholds implements Households {
   @Override
   public Optional<Household> updateWithOptimisticLock(Household household) {
     var existingHousehold = householdsRepository.findById(household.id());
-    var versionMatches =
-        existingHousehold.map(that -> Objects.equals(that.getId(), household.id())).orElse(false);
-    if (versionMatches) {
+    var versionsMatch =
+        existingHousehold
+            .map(that -> Objects.equals(that.getVersion(), household.version()))
+            .orElse(false);
+
+    if (versionsMatch) {
       log.info("Optimistic locking of [{}] successful - update will be performed", household);
       var entity = createEntity(household);
       entity.setVersion(entity.getVersion() + 1);
