@@ -25,18 +25,27 @@ public class DefaultUpdateHouseholdUseCase implements UpdateHouseholdUseCase {
 
   @Override
   public Household execute(Household household) {
+    checkPreconditions(household);
+    log.info("Preconditions checks successful - updating [{}]", household);
+    return households
+        .updateWithOptimisticLock(household)
+        .orElseThrow(() -> new ConflictingDataException("Optimistic lock failed"));
+  }
+
+  private void checkPreconditions(Household household) {
+    log.info("Checking precondition for [{}]", household);
     Invariants.requireNonNull(household, "household");
     Invariants.requireTrue(
         !household.members().isEmpty(), "At least one member must be referenced");
     Invariants.requireTrue(
         allReferencedMembersExist(household), "Some of referenced members do not exist");
+    checkThatHouseholdExist(household);
+  }
 
-    if (households.getById(household.id()).isEmpty())
+  private void checkThatHouseholdExist(Household household) {
+    if (households.getById(household.id()).isEmpty()) {
       throw new NoSuchEntityException("Cannot update non-existent household");
-
-    return households
-        .updateWithOptimisticLock(household)
-        .orElseThrow(() -> new ConflictingDataException("Optimistic lock failed"));
+    }
   }
 
   private boolean allReferencedMembersExist(Household newHousehold) {
