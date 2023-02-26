@@ -57,4 +57,29 @@ class HouseholdDtoMapperTest {
           .containsExactlyInAnyOrder(new HouseholdMemberDto(1), new HouseholdMemberDto(5));
     }
   }
+
+  @Nested
+  class HouseholdDtoToHousehold {
+    @Test
+    void allFieldsAreMapped() {
+      // given
+      var dto =
+          HouseholdDto.builder()
+              .id(21)
+              .version(37)
+              .name("Household name")
+              .members(Set.of(new HouseholdMemberDto(1), new HouseholdMemberDto(5)))
+              .build();
+
+      // when
+      var household = tested.map(dto);
+
+      // then
+      assertThat(household.name()).isEqualTo("Household name");
+      assertThat(household.id()).isEqualTo(21);
+      assertThat(household.version()).isEqualTo(37);
+      assertThat(household.members())
+          .containsExactlyInAnyOrder(new HouseholdMember(1), new HouseholdMember(5));
+    }
+  }
 }

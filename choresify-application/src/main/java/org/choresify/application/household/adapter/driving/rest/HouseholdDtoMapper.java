@@ -14,4 +14,6 @@ interface HouseholdDtoMapper {
   NewHousehold map(NewHouseholdDto dto);
 
   HouseholdDto map(Household household);
+
+  Household map(HouseholdDto household);
 }

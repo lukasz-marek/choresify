@@ -2,6 +2,7 @@ package org.choresify.application.member.adapter.driven.postgres;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Collections;
 import java.util.List;
 import org.choresify.domain.member.model.Member;
@@ -15,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @PersistenceTest
 class PostgresMembersTest {
-  @Autowired private PostgresMembers tested;
+  @SuppressFBWarnings @Autowired private PostgresMembers tested;
 
   @Nested
   class Insertion {

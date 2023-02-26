@@ -7,11 +7,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.choresify.application.common.transaction.TransactionalRunner;
 import org.choresify.domain.household.usecase.CreateHouseholdUseCase;
 import org.choresify.domain.household.usecase.GetHouseholdByIdUseCase;
+import org.choresify.domain.household.usecase.UpdateHouseholdUseCase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +27,8 @@ final class HouseholdController {
   private final HouseholdDtoMapper householdDtoMapper;
   private final CreateHouseholdUseCase createHouseholdUseCase;
   private final GetHouseholdByIdUseCase getHouseholdByIdUseCase;
+
+  private final UpdateHouseholdUseCase updateHouseholdUseCase;
 
   @PostMapping
   ResponseEntity<HouseholdDto> createHousehold(@RequestBody NewHouseholdDto newHouseholdDto) {
@@ -44,5 +48,13 @@ final class HouseholdController {
     return maybeDto
         .map(ResponseEntity::ok)
         .orElseGet(() -> ResponseEntity.status(NOT_FOUND).build());
+  }
+
+  @PutMapping("/{householdId}")
+  ResponseEntity<HouseholdDto> updateHousehold(
+      @PathVariable("householdId") long householdId, @RequestBody HouseholdDto householdDto) {
+    var household = householdDtoMapper.map(householdDto);
+    var updated = transactionalRunner.execute(() -> updateHouseholdUseCase.execute(household));
+    return ResponseEntity.ok(householdDtoMapper.map(updated));
   }
 }
