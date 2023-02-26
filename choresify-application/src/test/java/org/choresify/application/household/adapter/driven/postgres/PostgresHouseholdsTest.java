@@ -13,16 +13,14 @@ import org.choresify.domain.household.model.NewHousehold;
 import org.choresify.domain.member.model.Member;
 import org.choresify.domain.member.model.NewMember;
 import org.choresify.domain.member.port.Members;
-import org.choresify.fixtures.IntegrationTest;
+import org.choresify.fixtures.PersistenceTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@IntegrationTest
-@Transactional
+@PersistenceTest
 class PostgresHouseholdsTest {
   @Autowired PostgresHouseholds tested;
   @Autowired Members members;

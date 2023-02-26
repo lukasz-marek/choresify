@@ -1,9 +1,9 @@
 package org.choresify.application;
 
-import org.choresify.fixtures.IntegrationTest;
+import org.choresify.fixtures.AcceptanceTest;
 import org.junit.jupiter.api.Test;
 
-@IntegrationTest
+@AcceptanceTest
 class ChoresifyApplicationTests {
 
   @Test

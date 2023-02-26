@@ -8,4 +8,4 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 @Retention(RetentionPolicy.RUNTIME)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @PostgreSQLTest
-public @interface IntegrationTest {}
+public @interface AcceptanceTest {}

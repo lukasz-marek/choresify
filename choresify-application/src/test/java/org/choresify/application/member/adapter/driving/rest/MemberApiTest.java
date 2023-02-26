@@ -8,7 +8,7 @@ import org.choresify.application.common.transaction.TransactionalRunner;
 import org.choresify.domain.member.model.Member;
 import org.choresify.domain.member.model.NewMember;
 import org.choresify.domain.member.port.Members;
-import org.choresify.fixtures.IntegrationTest;
+import org.choresify.fixtures.AcceptanceTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,7 +19,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 
-@IntegrationTest
+@AcceptanceTest
 class MemberApiTest {
   private static final String MEMBER_ENDPOINT = "/api/v1/members";
 
