@@ -15,9 +15,12 @@ import org.choresify.domain.member.port.Members;
 import org.choresify.fixtures.AcceptanceTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 
 @AcceptanceTest
@@ -163,6 +166,139 @@ class HouseholdApiTest {
       assertThat(updatedHousehold.version()).isEqualTo(forUpdate.version() + 1);
       assertThat(updatedHousehold.members()).containsExactly(new HouseholdMemberDto(member2.id()));
       assertThat(updatedHousehold.name()).isEqualTo(forUpdate.name());
+    }
+
+    @Test
+    void returnsBadRequestWhenIdFromBodyIsDifferentThanInPath() {
+      // given
+      var member1 = createNewMember();
+      var member2 = createNewMember();
+      var existingHousehold =
+          insert(
+              NewHousehold.builder()
+                  .name("a household")
+                  .members(Set.of(new HouseholdMember(member1.id())))
+                  .build());
+      var forUpdate =
+          HouseholdDto.builder()
+              .id(existingHousehold.id())
+              .version(existingHousehold.version())
+              .name("a new name")
+              .members(Set.of(new HouseholdMemberDto(member2.id())))
+              .build();
+
+      // when
+      var response =
+          testRestTemplate.exchange(
+              RequestEntity.put(HOUSEHOLD_ENDPOINT + "/{householdId}", 2137).body(forUpdate),
+              String.class);
+
+      // then
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void returnsNotFoundWhenHouseholdDoesNotExist() {
+      // given
+      var member2 = createNewMember();
+      var forUpdate =
+          HouseholdDto.builder()
+              .id(2127)
+              .version(1)
+              .name("a new name")
+              .members(Set.of(new HouseholdMemberDto(member2.id())))
+              .build();
+
+      // when
+      var response =
+          testRestTemplate.exchange(
+              RequestEntity.put(HOUSEHOLD_ENDPOINT + "/{householdId}", forUpdate.id())
+                  .body(forUpdate),
+              String.class);
+
+      // then
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    void returnsBadRequestWhenReferencingNonExistentMember() {
+      // given
+      var member1 = createNewMember();
+      var existingHousehold =
+          insert(
+              NewHousehold.builder()
+                  .name("a household")
+                  .members(Set.of(new HouseholdMember(member1.id())))
+                  .build());
+      var forUpdate =
+          HouseholdDto.builder()
+              .id(existingHousehold.id())
+              .version(existingHousehold.version())
+              .name("a new name")
+              .members(Set.of(new HouseholdMemberDto(2137)))
+              .build();
+
+      // when
+      var response =
+          testRestTemplate.exchange(
+              RequestEntity.put(HOUSEHOLD_ENDPOINT + "/{householdId}", forUpdate.id())
+                  .body(forUpdate),
+              String.class);
+
+      // then
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void returnsConflictWhenOptimisticLockingFails() {
+      // given
+      var member1 = createNewMember();
+      var existingHousehold =
+          insert(
+              NewHousehold.builder()
+                  .name("a household")
+                  .members(Set.of(new HouseholdMember(member1.id())))
+                  .build());
+      var forUpdate =
+          HouseholdDto.builder()
+              .id(existingHousehold.id())
+              .version(existingHousehold.version() - 1)
+              .name("a new name")
+              .members(Set.of(new HouseholdMemberDto(member1.id())))
+              .build();
+
+      // when
+      var response =
+          testRestTemplate.exchange(
+              RequestEntity.put(HOUSEHOLD_ENDPOINT + "/{householdId}", forUpdate.id())
+                  .body(forUpdate),
+              String.class);
+
+      // then
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+        strings = {
+          "{}",
+          "",
+          "{\"name\": \"a name\"}",
+          "{\"members\": null}",
+          "{\"members\": []}",
+          "{\"id\": 2137}"
+        })
+    void returnsBadRequestOnIncompletePayloads(String incompletePayload) {
+      // when
+      var response =
+          testRestTemplate.exchange(
+              RequestEntity.put(HOUSEHOLD_ENDPOINT + "/{householdId}", 2137)
+                  .contentType(MediaType.APPLICATION_JSON)
+                  .body(incompletePayload),
+              String.class);
+
+      // then
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
   }
 }

@@ -2,6 +2,7 @@ package org.choresify.application.household.adapter.driving.rest;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.choresify.application.common.transaction.TransactionalRunner;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/v1/households")
@@ -29,6 +31,15 @@ final class HouseholdController {
   private final GetHouseholdByIdUseCase getHouseholdByIdUseCase;
 
   private final UpdateHouseholdUseCase updateHouseholdUseCase;
+
+  private static void checkHouseholdId(HouseholdDto householdDto, long householdId) {
+    if (!Objects.equals(householdId, householdDto.id())) {
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST,
+          "Ambiguous resource id: found %s in body and %s in uri"
+              .formatted(householdDto.id(), householdId));
+    }
+  }
 
   @PostMapping
   ResponseEntity<HouseholdDto> createHousehold(@RequestBody NewHouseholdDto newHouseholdDto) {
@@ -53,6 +64,8 @@ final class HouseholdController {
   @PutMapping("/{householdId}")
   ResponseEntity<HouseholdDto> updateHousehold(
       @PathVariable("householdId") long householdId, @RequestBody HouseholdDto householdDto) {
+    checkHouseholdId(householdDto, householdId);
+
     var household = householdDtoMapper.map(householdDto);
     var updated = transactionalRunner.execute(() -> updateHouseholdUseCase.execute(household));
     return ResponseEntity.ok(householdDtoMapper.map(updated));
