@@ -42,7 +42,7 @@ public class DefaultCreateHouseholdUseCase implements CreateHouseholdUseCase {
   }
 
   private Map<Long, Member> getReferencedMembers(NewHousehold newHousehold) {
-    var referencedIds = newHousehold.members().stream().map(HouseholdMember::memberId).toList();
+    var referencedIds = newHousehold.members().stream().map(HouseholdMember::getMemberId).toList();
     return members.findById(referencedIds);
   }
 }

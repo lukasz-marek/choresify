@@ -36,7 +36,7 @@ class DefaultUpdateHouseholdUseCaseTest {
     var forUpdate =
         existingHousehold.toBuilder()
             .name("new name")
-            .members(Set.of(new HouseholdMember(existingMember.id())))
+            .members(Set.of(HouseholdMember.of(existingMember.id())))
             .build();
     // when
     var result = tested.execute(forUpdate);
@@ -45,7 +45,7 @@ class DefaultUpdateHouseholdUseCaseTest {
     assertThat(result.id()).isEqualTo(forUpdate.id());
     assertThat(result.version()).isEqualTo(forUpdate.version() + 1);
     assertThat(result.name()).isEqualTo("new name");
-    assertThat(result.members()).containsExactly(new HouseholdMember(existingMember.id()));
+    assertThat(result.members()).containsExactly(HouseholdMember.of(existingMember.id()));
   }
 
   @Test
@@ -67,7 +67,7 @@ class DefaultUpdateHouseholdUseCaseTest {
     var forUpdate =
         existingHousehold.toBuilder()
             .name("new name")
-            .members(Set.of(new HouseholdMember(2137)))
+            .members(Set.of(HouseholdMember.of(2137)))
             .build();
     // when
     var result =
@@ -87,7 +87,7 @@ class DefaultUpdateHouseholdUseCaseTest {
         households.insert(
             NewHousehold.builder()
                 .name("a household")
-                .members(Set.of(new HouseholdMember(existingMember.id())))
+                .members(Set.of(HouseholdMember.of(existingMember.id())))
                 .build());
     var forUpdate =
         existingHousehold.toBuilder().name("new name").members(Collections.emptySet()).build();
@@ -110,7 +110,7 @@ class DefaultUpdateHouseholdUseCaseTest {
             .id(2137)
             .version(0)
             .name("new name")
-            .members(Set.of(new HouseholdMember(existingMember.id())))
+            .members(Set.of(HouseholdMember.of(existingMember.id())))
             .build();
     // when
     var result = catchThrowableOfType(() -> tested.execute(forUpdate), NoSuchEntityException.class);
@@ -132,7 +132,7 @@ class DefaultUpdateHouseholdUseCaseTest {
         existingHousehold.toBuilder()
             .name("new name")
             .version(existingHousehold.version() - 1)
-            .members(Set.of(new HouseholdMember(existingMember.id())))
+            .members(Set.of(HouseholdMember.of(existingMember.id())))
             .build();
     // when
     var result =

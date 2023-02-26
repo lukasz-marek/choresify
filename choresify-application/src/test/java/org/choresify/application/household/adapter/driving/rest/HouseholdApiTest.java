@@ -101,7 +101,7 @@ class HouseholdApiTest {
           insert(
               NewHousehold.builder()
                   .name("a household")
-                  .members(Set.of(new HouseholdMember(existingMember.id())))
+                  .members(Set.of(HouseholdMember.of(existingMember.id())))
                   .build());
 
       // when
@@ -141,7 +141,7 @@ class HouseholdApiTest {
           insert(
               NewHousehold.builder()
                   .name("a household")
-                  .members(Set.of(new HouseholdMember(member1.id())))
+                  .members(Set.of(HouseholdMember.of(member1.id())))
                   .build());
       var forUpdate =
           HouseholdDto.builder()
@@ -177,7 +177,7 @@ class HouseholdApiTest {
           insert(
               NewHousehold.builder()
                   .name("a household")
-                  .members(Set.of(new HouseholdMember(member1.id())))
+                  .members(Set.of(HouseholdMember.of(member1.id())))
                   .build());
       var forUpdate =
           HouseholdDto.builder()
@@ -228,7 +228,7 @@ class HouseholdApiTest {
           insert(
               NewHousehold.builder()
                   .name("a household")
-                  .members(Set.of(new HouseholdMember(member1.id())))
+                  .members(Set.of(HouseholdMember.of(member1.id())))
                   .build());
       var forUpdate =
           HouseholdDto.builder()
@@ -257,7 +257,7 @@ class HouseholdApiTest {
           insert(
               NewHousehold.builder()
                   .name("a household")
-                  .members(Set.of(new HouseholdMember(member1.id())))
+                  .members(Set.of(HouseholdMember.of(member1.id())))
                   .build());
       var forUpdate =
           HouseholdDto.builder()

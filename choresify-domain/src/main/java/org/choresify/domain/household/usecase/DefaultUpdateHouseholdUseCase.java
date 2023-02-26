@@ -54,7 +54,7 @@ public class DefaultUpdateHouseholdUseCase implements UpdateHouseholdUseCase {
   }
 
   private Map<Long, Member> getReferencedMembers(Household newHousehold) {
-    var referencedIds = newHousehold.members().stream().map(HouseholdMember::memberId).toList();
+    var referencedIds = newHousehold.members().stream().map(HouseholdMember::getMemberId).toList();
     return members.findById(referencedIds);
   }
 }

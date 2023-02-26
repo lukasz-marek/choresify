@@ -29,7 +29,7 @@ class HouseholdDtoMapperTest {
       // then
       assertThat(newHousehold.name()).isEqualTo("Household name");
       assertThat(newHousehold.members())
-          .containsExactlyInAnyOrder(new HouseholdMember(1), new HouseholdMember(5));
+          .containsExactlyInAnyOrder(HouseholdMember.of(1), HouseholdMember.of(5));
     }
   }
 
@@ -43,7 +43,7 @@ class HouseholdDtoMapperTest {
               .id(21)
               .version(37)
               .name("Household name")
-              .members(Set.of(new HouseholdMember(1), new HouseholdMember(5)))
+              .members(Set.of(HouseholdMember.of(1), HouseholdMember.of(5)))
               .build();
 
       // when
@@ -79,7 +79,7 @@ class HouseholdDtoMapperTest {
       assertThat(household.id()).isEqualTo(21);
       assertThat(household.version()).isEqualTo(37);
       assertThat(household.members())
-          .containsExactlyInAnyOrder(new HouseholdMember(1), new HouseholdMember(5));
+          .containsExactlyInAnyOrder(HouseholdMember.of(1), HouseholdMember.of(5));
     }
   }
 }

@@ -50,12 +50,12 @@ class HouseholdTest {
     var household =
         Household.builder()
             .name("a name")
-            .members(Collections.singleton(new HouseholdMember(1)))
+            .members(Collections.singleton(HouseholdMember.of(1)))
             .build();
 
     // then
     assertThat(household.name()).isEqualTo("a name");
-    assertThat(household.members()).containsExactly(new HouseholdMember(1));
+    assertThat(household.members()).containsExactly(HouseholdMember.of(1));
     assertThat(household.version()).isEqualTo(0);
     assertThat(household.id()).isEqualTo(0);
   }
@@ -66,7 +66,7 @@ class HouseholdTest {
     var household =
         Household.builder()
             .name("\t  \n \na  \t\t\n  name \t\t\n")
-            .members(Collections.singleton(new HouseholdMember(1)))
+            .members(Collections.singleton(HouseholdMember.of(1)))
             .build();
 
     // then

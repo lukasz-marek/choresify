@@ -21,10 +21,7 @@ class HouseholdEntityMapperTest {
     void allFieldsAreMapped() {
       // given
       var newHousehold =
-          NewHousehold.builder()
-              .name("a household")
-              .members(Set.of(new HouseholdMember(5)))
-              .build();
+          NewHousehold.builder().name("a household").members(Set.of(HouseholdMember.of(5))).build();
 
       // when
       var entity = tested.map(newHousehold);
@@ -58,7 +55,7 @@ class HouseholdEntityMapperTest {
       assertThat(household.id()).isEqualTo(21);
       assertThat(household.version()).isEqualTo(37);
       assertThat(household.name()).isEqualTo("a household");
-      assertThat(household.members()).containsExactlyInAnyOrder(new HouseholdMember(55));
+      assertThat(household.members()).containsExactlyInAnyOrder(HouseholdMember.of(55));
     }
   }
 
@@ -70,7 +67,7 @@ class HouseholdEntityMapperTest {
       var newHousehold =
           Household.builder()
               .name("a household")
-              .members(Set.of(new HouseholdMember(5)))
+              .members(Set.of(HouseholdMember.of(5)))
               .id(21)
               .version(37)
               .build();

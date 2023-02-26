@@ -28,13 +28,13 @@ abstract class HouseholdEntityMapper {
   protected HouseholdMember map(MemberEntity entity) {
     return Optional.ofNullable(entity)
         .filter(anEntity -> anEntity.getId() != null)
-        .map(anEntity -> new HouseholdMember(entity.getId()))
+        .map(anEntity -> HouseholdMember.of(entity.getId()))
         .orElse(null);
   }
 
   protected MemberEntity map(HouseholdMember member) {
     return Optional.ofNullable(member)
-        .map(aMember -> MemberEntity.builder().id(member.memberId()).build())
+        .map(aMember -> MemberEntity.builder().id(member.getMemberId()).build())
         .orElse(null);
   }
 }

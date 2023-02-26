@@ -1,3 +1,8 @@
 package org.choresify.domain.household.model;
 
-public record HouseholdMember(long memberId) {}
+import lombok.Value;
+
+@Value(staticConstructor = "of")
+public class HouseholdMember {
+  long memberId;
+}

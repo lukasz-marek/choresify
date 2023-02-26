@@ -45,9 +45,9 @@ class DefaultCreateHouseholdUseCaseTest {
             .name("household name")
             .members(
                 Set.of(
-                    new HouseholdMember(member1.id()),
-                    new HouseholdMember(member2.id()),
-                    new HouseholdMember(2137L)))
+                    HouseholdMember.of(member1.id()),
+                    HouseholdMember.of(member2.id()),
+                    HouseholdMember.of(2137L)))
             .build();
 
     // when
@@ -84,7 +84,7 @@ class DefaultCreateHouseholdUseCaseTest {
     var newHousehold =
         NewHousehold.builder()
             .name("household name")
-            .members(Set.of(new HouseholdMember(member1.id()), new HouseholdMember(member2.id())))
+            .members(Set.of(HouseholdMember.of(member1.id()), HouseholdMember.of(member2.id())))
             .build();
 
     // when
@@ -95,6 +95,6 @@ class DefaultCreateHouseholdUseCaseTest {
     assertThat(household.name()).isEqualTo("household name");
     assertThat(household.members())
         .containsExactlyInAnyOrder(
-            new HouseholdMember(member1.id()), new HouseholdMember(member2.id()));
+            HouseholdMember.of(member1.id()), HouseholdMember.of(member2.id()));
   }
 }

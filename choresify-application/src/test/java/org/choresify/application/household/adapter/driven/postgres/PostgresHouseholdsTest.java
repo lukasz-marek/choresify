@@ -42,7 +42,7 @@ class PostgresHouseholdsTest {
       var newHousehold =
           NewHousehold.builder()
               .name("a household")
-              .members(Set.of(new HouseholdMember(existingMember.id())))
+              .members(Set.of(HouseholdMember.of(existingMember.id())))
               .build();
 
       // when
@@ -52,7 +52,7 @@ class PostgresHouseholdsTest {
       assertThat(household.version()).isEqualTo(0);
       assertThat(household.name()).isEqualTo("a household");
       assertThat(household.members())
-          .containsExactlyInAnyOrder(new HouseholdMember(existingMember.id()));
+          .containsExactlyInAnyOrder(HouseholdMember.of(existingMember.id()));
     }
 
     @Test
@@ -61,7 +61,7 @@ class PostgresHouseholdsTest {
       var newHousehold =
           NewHousehold.builder()
               .name("a household")
-              .members(Set.of(new HouseholdMember(-2)))
+              .members(Set.of(HouseholdMember.of(-2)))
               .build();
 
       // when
@@ -82,7 +82,7 @@ class PostgresHouseholdsTest {
       var newHousehold =
           NewHousehold.builder()
               .name("a household")
-              .members(Set.of(new HouseholdMember(existingMember.id())))
+              .members(Set.of(HouseholdMember.of(existingMember.id())))
               .build();
       var existingId = tested.insert(newHousehold).id();
       // when
@@ -94,7 +94,7 @@ class PostgresHouseholdsTest {
       assertThat(household.version()).isEqualTo(0);
       assertThat(household.name()).isEqualTo("a household");
       assertThat(household.members())
-          .containsExactlyInAnyOrder(new HouseholdMember(existingMember.id()));
+          .containsExactlyInAnyOrder(HouseholdMember.of(existingMember.id()));
     }
 
     @Test
@@ -116,7 +116,7 @@ class PostgresHouseholdsTest {
       var newHousehold =
           NewHousehold.builder()
               .name("a household")
-              .members(Set.of(new HouseholdMember(existingMember.id())))
+              .members(Set.of(HouseholdMember.of(existingMember.id())))
               .build();
       var exitingHousehold = tested.insert(newHousehold);
       var forUpdate =
@@ -141,15 +141,15 @@ class PostgresHouseholdsTest {
       var newHousehold =
           NewHousehold.builder()
               .name("a household")
-              .members(Set.of(new HouseholdMember(existingMember1.id())))
+              .members(Set.of(HouseholdMember.of(existingMember1.id())))
               .build();
       var exitingHousehold = tested.insert(newHousehold);
       var forUpdate =
           exitingHousehold.toBuilder()
               .members(
                   Set.of(
-                      new HouseholdMember(existingMember1.id()),
-                      new HouseholdMember(existingMember2.id())))
+                      HouseholdMember.of(existingMember1.id()),
+                      HouseholdMember.of(existingMember2.id())))
               .build();
 
       // when
@@ -162,7 +162,7 @@ class PostgresHouseholdsTest {
       assertThat(household.name()).isEqualTo("a household");
       assertThat(household.members())
           .containsExactlyInAnyOrder(
-              new HouseholdMember(existingMember1.id()), new HouseholdMember(existingMember2.id()));
+              HouseholdMember.of(existingMember1.id()), HouseholdMember.of(existingMember2.id()));
     }
 
     @Test
@@ -173,15 +173,15 @@ class PostgresHouseholdsTest {
       var newHousehold =
           NewHousehold.builder()
               .name("a household")
-              .members(Set.of(new HouseholdMember(existingMember1.id())))
+              .members(Set.of(HouseholdMember.of(existingMember1.id())))
               .build();
       var exitingHousehold = tested.insert(newHousehold);
       var forUpdate =
           exitingHousehold.toBuilder()
               .members(
                   Set.of(
-                      new HouseholdMember(existingMember1.id()),
-                      new HouseholdMember(existingMember2.id())))
+                      HouseholdMember.of(existingMember1.id()),
+                      HouseholdMember.of(existingMember2.id())))
               .build();
 
       // when
@@ -199,13 +199,12 @@ class PostgresHouseholdsTest {
       var newHousehold =
           NewHousehold.builder()
               .name("a household")
-              .members(Set.of(new HouseholdMember(existingMember1.id())))
+              .members(Set.of(HouseholdMember.of(existingMember1.id())))
               .build();
       var exitingHousehold = tested.insert(newHousehold);
       var forUpdate =
           exitingHousehold.toBuilder()
-              .members(
-                  Set.of(new HouseholdMember(existingMember1.id()), new HouseholdMember(2137L)))
+              .members(Set.of(HouseholdMember.of(existingMember1.id()), HouseholdMember.of(2137L)))
               .build();
 
       // when
@@ -224,7 +223,7 @@ class PostgresHouseholdsTest {
       var newHousehold =
           NewHousehold.builder()
               .name("a household")
-              .members(Set.of(new HouseholdMember(existingMember1.id())))
+              .members(Set.of(HouseholdMember.of(existingMember1.id())))
               .build();
       var exitingHousehold = tested.insert(newHousehold);
       var forUpdate =
@@ -232,8 +231,8 @@ class PostgresHouseholdsTest {
               .version(exitingHousehold.version() - versionDiff)
               .members(
                   Set.of(
-                      new HouseholdMember(existingMember1.id()),
-                      new HouseholdMember(existingMember2.id())))
+                      HouseholdMember.of(existingMember1.id()),
+                      HouseholdMember.of(existingMember2.id())))
               .build();
 
       // when
