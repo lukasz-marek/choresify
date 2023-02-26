@@ -166,6 +166,33 @@ class PostgresHouseholdsTest {
     }
 
     @Test
+    void updateIsPersistent() {
+      // given
+      var existingMember1 = createMember();
+      var existingMember2 = createMember();
+      var newHousehold =
+          NewHousehold.builder()
+              .name("a household")
+              .members(Set.of(new HouseholdMember(existingMember1.id())))
+              .build();
+      var exitingHousehold = tested.insert(newHousehold);
+      var forUpdate =
+          exitingHousehold.toBuilder()
+              .members(
+                  Set.of(
+                      new HouseholdMember(existingMember1.id()),
+                      new HouseholdMember(existingMember2.id())))
+              .build();
+
+      // when
+      var updateResult = tested.updateWithOptimisticLock(forUpdate);
+      var readHousehold = tested.getById(forUpdate.id());
+
+      // then
+      assertThat(readHousehold).isEqualTo(updateResult);
+    }
+
+    @Test
     void updateFailsWhenNonExistentMemberIsReferenced() {
       // given
       var existingMember1 = createMember();
