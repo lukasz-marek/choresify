@@ -2,7 +2,8 @@ package org.choresify.domain.household.usecase;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.Collections;
+import java.util.Set;
+import org.choresify.domain.household.model.HouseholdMember;
 import org.choresify.domain.household.model.NewHousehold;
 import org.choresify.domain.household.port.Households;
 import org.choresify.fixtures.household.port.InMemoryHouseholds;
@@ -18,7 +19,10 @@ class DefaultGetHouseholdByIdUseCaseTest {
     // given
     var existingHousehold =
         households.insert(
-            NewHousehold.builder().name("a name").members(Collections.emptySet()).build());
+            NewHousehold.builder()
+                .name("a name")
+                .members(Set.of(HouseholdMember.of(2137)))
+                .build());
 
     // when
     var maybeHousehold = tested.execute(existingHousehold.id());

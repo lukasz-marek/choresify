@@ -3,7 +3,6 @@ package org.choresify.domain.household.usecase;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
-import java.util.Collections;
 import java.util.Set;
 import org.choresify.domain.exception.ConflictingDataException;
 import org.choresify.domain.exception.InvariantViolationException;
@@ -27,12 +26,18 @@ class DefaultUpdateHouseholdUseCaseTest {
   @Test
   void successfullyUpdatesWhenHouseholdExistsAndReferencedMembersExist() {
     // given
+    var previousMember =
+        members.insert(
+            NewMember.builder().nickname("a nickname").emailAddress("email1@example.com").build());
     var existingMember =
         members.insert(
             NewMember.builder().nickname("a nickname").emailAddress("email1@example.com").build());
     var existingHousehold =
         households.insert(
-            NewHousehold.builder().name("a household").members(Collections.emptySet()).build());
+            NewHousehold.builder()
+                .name("a household")
+                .members(Set.of(HouseholdMember.of(previousMember.id())))
+                .build());
     var forUpdate =
         existingHousehold.toBuilder()
             .name("new name")
@@ -61,9 +66,15 @@ class DefaultUpdateHouseholdUseCaseTest {
   @Test
   void throwsWhenAnyReferencedMemberDoesNotExist() {
     // given
+    var existingMember =
+        members.insert(
+            NewMember.builder().nickname("a nickname").emailAddress("email1@example.com").build());
     var existingHousehold =
         households.insert(
-            NewHousehold.builder().name("a household").members(Collections.emptySet()).build());
+            NewHousehold.builder()
+                .name("a household")
+                .members(Set.of(HouseholdMember.of(existingMember.id())))
+                .build());
     var forUpdate =
         existingHousehold.toBuilder()
             .name("new name")
@@ -75,28 +86,6 @@ class DefaultUpdateHouseholdUseCaseTest {
 
     // then
     assertThat(result).hasMessageContaining("Some of referenced members do not exist");
-  }
-
-  @Test
-  void throwsWhenNoMembersAreReferenced() {
-    // given
-    var existingMember =
-        members.insert(
-            NewMember.builder().nickname("a nickname").emailAddress("email1@example.com").build());
-    var existingHousehold =
-        households.insert(
-            NewHousehold.builder()
-                .name("a household")
-                .members(Set.of(HouseholdMember.of(existingMember.id())))
-                .build());
-    var forUpdate =
-        existingHousehold.toBuilder().name("new name").members(Collections.emptySet()).build();
-    // when
-    var result =
-        catchThrowableOfType(() -> tested.execute(forUpdate), InvariantViolationException.class);
-
-    // then
-    assertThat(result).hasMessageContaining("At least one member must be referenced");
   }
 
   @Test
@@ -127,7 +116,10 @@ class DefaultUpdateHouseholdUseCaseTest {
             NewMember.builder().nickname("a nickname").emailAddress("email1@example.com").build());
     var existingHousehold =
         households.insert(
-            NewHousehold.builder().name("a household").members(Collections.emptySet()).build());
+            NewHousehold.builder()
+                .name("a household")
+                .members(Set.of(HouseholdMember.of(existingMember.id())))
+                .build());
     var forUpdate =
         existingHousehold.toBuilder()
             .name("new name")

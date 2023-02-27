@@ -36,8 +36,6 @@ public class DefaultUpdateHouseholdUseCase implements UpdateHouseholdUseCase {
     log.info("Checking precondition for [{}]", household);
     Invariants.requireNonNull(household, "household");
     Invariants.requireTrue(
-        !household.members().isEmpty(), "At least one member must be referenced");
-    Invariants.requireTrue(
         allReferencedMembersExist(household), "Some of referenced members do not exist");
     checkThatHouseholdExist(household);
   }

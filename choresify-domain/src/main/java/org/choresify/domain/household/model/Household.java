@@ -13,6 +13,7 @@ public record Household(long id, String name, Set<HouseholdMember> members, long
   public Household {
     Invariants.requireNonNull(name, "name");
     Invariants.requireNonNull(members, "members");
+    Invariants.requireTrue(!members.isEmpty(), "members must not be empty");
     members.forEach(member -> Invariants.requireNonNull(member, "members"));
 
     name = NameSanitizer.sanitize(name);

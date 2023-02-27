@@ -1,9 +1,9 @@
 package org.choresify.domain.household.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
 import java.util.Collections;
-import org.assertj.core.api.Assertions;
 import org.choresify.domain.exception.InvariantViolationException;
 import org.junit.jupiter.api.Test;
 
@@ -12,8 +12,12 @@ class HouseholdTest {
   void cannotCreateHouseholdWithNullName() {
     // given
     var throwable =
-        Assertions.catchThrowableOfType(
-            () -> Household.builder().name(null).members(Collections.emptySet()).build(),
+        catchThrowableOfType(
+            () ->
+                Household.builder()
+                    .name(null)
+                    .members(Collections.singleton(HouseholdMember.of(1)))
+                    .build(),
             InvariantViolationException.class);
 
     // then
@@ -21,10 +25,22 @@ class HouseholdTest {
   }
 
   @Test
+  void cannotCreateHouseholdWithEmptyMembers() {
+    // given
+    var throwable =
+        catchThrowableOfType(
+            () -> Household.builder().name("a name").members(Collections.emptySet()).build(),
+            InvariantViolationException.class);
+
+    // then
+    assertThat(throwable).hasMessage("members must not be empty");
+  }
+
+  @Test
   void cannotCreateHouseholdWithNullMembers() {
     // given
     var throwable =
-        Assertions.catchThrowableOfType(
+        catchThrowableOfType(
             () -> Household.builder().name("a name").members(null).build(),
             InvariantViolationException.class);
 
@@ -36,7 +52,7 @@ class HouseholdTest {
   void cannotCreateHouseholdWithNullMember() {
     // given
     var throwable =
-        Assertions.catchThrowableOfType(
+        catchThrowableOfType(
             () -> Household.builder().name("a name").members(Collections.singleton(null)).build(),
             InvariantViolationException.class);
 

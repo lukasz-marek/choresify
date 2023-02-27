@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchRuntimeException;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
-import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
 import org.choresify.domain.household.model.Household;
@@ -112,15 +111,19 @@ class PostgresHouseholdsTest {
     @Test
     void updateIsSuccessfulWhenHouseholdExistsAndVersionMatches() {
       // given
-      var existingMember = createMember();
+      var existingMember1 = createMember();
+      var existingMember2 = createMember();
       var newHousehold =
           NewHousehold.builder()
               .name("a household")
-              .members(Set.of(HouseholdMember.of(existingMember.id())))
+              .members(Set.of(HouseholdMember.of(existingMember1.id())))
               .build();
       var exitingHousehold = tested.insert(newHousehold);
       var forUpdate =
-          exitingHousehold.toBuilder().name("a new name").members(Collections.emptySet()).build();
+          exitingHousehold.toBuilder()
+              .name("a new name")
+              .members(Set.of(HouseholdMember.of(existingMember2.id())))
+              .build();
 
       // when
       var maybeHousehold = tested.updateWithOptimisticLock(forUpdate);
@@ -130,7 +133,7 @@ class PostgresHouseholdsTest {
       var household = maybeHousehold.get();
       assertThat(household.version()).isEqualTo(exitingHousehold.version() + 1);
       assertThat(household.name()).isEqualTo("a new name");
-      assertThat(household.members()).isEmpty();
+      assertThat(household.members()).containsExactly(HouseholdMember.of(existingMember2.id()));
     }
 
     @Test
@@ -245,11 +248,12 @@ class PostgresHouseholdsTest {
     @Test
     void updateFailsWhenHouseHoldDoesNotExist() {
       // given
+      var existingMember = createMember();
       var forUpdate =
           Household.builder()
               .id(2137)
               .version(1)
-              .members(Collections.emptySet())
+              .members(Set.of(HouseholdMember.of(existingMember.id())))
               .name("a household")
               .build();
 
