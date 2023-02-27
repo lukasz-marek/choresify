@@ -3,7 +3,6 @@ package org.choresify.domain.household.usecase;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
-import java.util.Collections;
 import java.util.Set;
 import org.choresify.domain.exception.InvariantViolationException;
 import org.choresify.domain.household.model.HouseholdMember;
@@ -56,20 +55,6 @@ class DefaultCreateHouseholdUseCaseTest {
 
     // then
     assertThat(throwable).hasMessage("Some of referenced members do not exist");
-  }
-
-  @Test
-  void failsToCreateHouseholdWhenNoMembersAreReferenced() {
-    // given
-    var newHousehold =
-        NewHousehold.builder().name("household name").members(Collections.emptySet()).build();
-
-    // when
-    var throwable =
-        catchThrowableOfType(() -> tested.execute(newHousehold), InvariantViolationException.class);
-
-    // then
-    assertThat(throwable).hasMessage("At least one member must be referenced");
   }
 
   @Test

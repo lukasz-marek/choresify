@@ -31,8 +31,6 @@ public class DefaultCreateHouseholdUseCase implements CreateHouseholdUseCase {
   private void checkInvariants(NewHousehold newHousehold) {
     Invariants.requireNonNull(newHousehold, "new household");
     Invariants.requireTrue(
-        !newHousehold.members().isEmpty(), "At least one member must be referenced");
-    Invariants.requireTrue(
         allReferencedMembersExist(newHousehold), "Some of referenced members do not exist");
   }
 

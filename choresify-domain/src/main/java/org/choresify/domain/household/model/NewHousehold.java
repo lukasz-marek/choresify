@@ -12,6 +12,7 @@ public record NewHousehold(String name, Set<HouseholdMember> members) {
   public NewHousehold {
     Invariants.requireNonNull(name, "name");
     Invariants.requireNonNull(members, "members");
+    Invariants.requireTrue(!members.isEmpty(), "members must not be empty");
     members.forEach(member -> Invariants.requireNonNull(member, "member"));
 
     members = Set.copyOf(members);

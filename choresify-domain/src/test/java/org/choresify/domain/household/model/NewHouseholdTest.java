@@ -3,6 +3,7 @@ package org.choresify.domain.household.model;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collections;
+import java.util.Set;
 import org.assertj.core.api.Assertions;
 import org.choresify.domain.exception.InvariantViolationException;
 import org.junit.jupiter.api.Test;
@@ -13,11 +14,24 @@ class NewHouseholdTest {
     // given
     var throwable =
         Assertions.catchThrowableOfType(
-            () -> NewHousehold.builder().name(null).members(Collections.emptySet()).build(),
+            () ->
+                NewHousehold.builder().name(null).members(Set.of(HouseholdMember.of(2137))).build(),
             InvariantViolationException.class);
 
     // then
     assertThat(throwable).hasMessageContaining("name");
+  }
+
+  @Test
+  void cannotCreateNewHouseholdWithEmptyMembers() {
+    // given
+    var throwable =
+        Assertions.catchThrowableOfType(
+            () -> NewHousehold.builder().name("a name").members(Collections.emptySet()).build(),
+            InvariantViolationException.class);
+
+    // then
+    assertThat(throwable).hasMessageContaining("members must not be empty");
   }
 
   @Test
